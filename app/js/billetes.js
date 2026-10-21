@@ -28,24 +28,40 @@ const Billetes = (() => {
       <p class="sub-h">${U.fmtLong(b.fecha)}${b.hora ? ' · ' + b.hora : ''}
         ${dia ? html` · <a href="#/dia/${dia.fecha}">ver el día</a>` : ''}</p>
       ${b.nota ? html`<p>${U.rich(b.nota)}</p>` : ''}
+      ${b.guia && Datos.guia(b.guia) ? html`<div class="guias-dia">${Piezas.guia(Datos.guia(b.guia), true)}</div>` : ''}
       ${archivos.length ? archivos.map(archivo) : html`<p class="vacio">Aún no está el billete.</p>`}`;
-    U.onActions(root, { abrir: el => abrir(archivos[Number(el.dataset.i)]) });
-    root.querySelectorAll('[data-act="abrir"]').forEach((el, i) => { el.dataset.i = i; });
+    U.onActions(root, {
+      abrir: el => abrir(archivos[Number(el.dataset.i)]),
+      ampliar: el => ampliar(archivos[Number(el.dataset.i)]),
+    });
   }
 
   const esImagen = a => /\.(png|jpe?g|webp|gif)$/i.test(a.ruta);
 
-  function archivo(a) {
+  function archivo(a, i) {
     if (esImagen(a)) {
-      return html`<figure class="billete-img"><img src="${a.url}" alt="${a.nombre}"><figcaption>${a.nombre}</figcaption></figure>`;
+      return html`<figure class="billete-img" data-act="ampliar" data-i="${i}">
+        <figcaption>${a.nombre}</figcaption><img src="${a.url}" alt="${a.nombre}" loading="lazy">
+        <small>Toca para verlo en grande</small></figure>`;
     }
     return html`<div class="billete-pdf">
       <span>${ICON.ticket}<b>${a.nombre}</b></span>
       <span class="row">
-        <button type="button" class="btn primary" data-act="abrir">${ICON.out}<span>Abrir</span></button>
+        <button type="button" class="btn primary" data-act="abrir" data-i="${i}">${ICON.out}<span>Abrir</span></button>
         <a class="btn" href="${a.url}" download="${a.nombre}">${ICON.download}<span>Descargar</span></a>
       </span>
     </div>`;
+  }
+
+  // A pantalla completa sobre blanco, para enseñarlo en el torno. Se cierra tocando.
+  function ampliar(a) {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'billete-grande';
+    dialog.innerHTML = html`<p>${a.nombre}</p><img src="${a.url}" alt="${a.nombre}"><small>Toca para cerrar · sube el brillo</small>`;
+    document.body.append(dialog);
+    dialog.addEventListener('close', () => dialog.remove());
+    dialog.addEventListener('click', () => dialog.close());
+    dialog.showModal();
   }
 
   // Los data: URI no se pueden abrir en otra pestaña; un blob, sí.

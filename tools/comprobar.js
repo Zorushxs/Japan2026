@@ -32,9 +32,14 @@ function comprobar() {
   });
   if (V.dias.length && V.dias[V.dias.length - 1].fecha !== V.fin) errores.push(`El último día no es ${V.fin}`);
 
-  (V.guias || []).forEach(g => g.bloques.forEach(b => (b.lugares || []).forEach(id => {
-    if (!Datos.existeLugar(id)) errores.push(`Guía ${g.id}: no existe el lugar «${id}»`);
-  })));
+  (V.guias || []).forEach(g => g.bloques.forEach(b => {
+    (b.lugares || []).forEach(id => {
+      if (!Datos.existeLugar(id)) errores.push(`Guía ${g.id}: no existe el lugar «${id}»`);
+    });
+    if (b.imagen && !fs.existsSync(path.join(PRIVADO, b.imagen))) {
+      errores.push(`Guía ${g.id}: no está la imagen privado/${b.imagen}`);
+    }
+  }));
 
   V.excursiones.forEach(e => {
     if (!V.zonas[e.zona]) errores.push(`Excursión ${e.id}: no existe la zona «${e.zona}»`);
@@ -46,6 +51,7 @@ function comprobar() {
   V.billetes.forEach(b => {
     if (ids.has(b.id)) errores.push(`Billete repetido: ${b.id}`);
     ids.add(b.id);
+    if (b.guia && !Datos.guia(b.guia)) errores.push(`Billete ${b.id}: no existe la guía «${b.guia}»`);
     Datos.archivosBillete(b).forEach(a => {
       if (!fs.existsSync(path.join(PRIVADO, a.ruta))) errores.push(`Billete ${b.id}: no está el archivo privado/${a.ruta}`);
     });

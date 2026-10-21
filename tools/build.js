@@ -1,7 +1,8 @@
 // Compila y cifra la app en index.html (lo único con datos del viaje que se publica).
 // Uso: node tools/build.js
 //   1. Junta app/index.html con su CSS, sus scripts y privado/viaje.js en un solo HTML.
-//   2. Mete las capturas de privado/mapas/ y los billetes de privado/billetes/ como data: URI (ARCHIVOS).
+//   2. Mete las capturas de privado/mapas/, los billetes de privado/billetes/ y las imágenes de privado/guias/ como
+//      data: URI (ARCHIVOS). privado/originales/ (los PDF tal cual llegan) no se mete.
 //   3. Lo cifra con AES-256-GCM; la clave sale de la contraseña con PBKDF2-SHA-256 (600.000 vueltas).
 //   4. Lo pone dentro de tools/cerradura.html y lo escribe en index.html.
 // La contraseña sale de la variable VIAJE_PASS o, si no está, de privado/contraseña.txt. La sal se guarda en
@@ -33,10 +34,10 @@ function sal() {
   return fs.readFileSync(archivo, 'utf8').trim();
 }
 
-// { 'mapas/2026-10-25.jpg': 'data:image/jpeg;base64,…', 'billetes/…': … }
+// { 'mapas/<id>.webp': 'data:image/webp;base64,…', 'billetes/…': …, 'guias/…': … }
 function archivos() {
   const out = {};
-  ['mapas', 'billetes'].forEach(carpeta => {
+  ['mapas', 'billetes', 'guias'].forEach(carpeta => {
     const dir = path.join(PRIVADO, carpeta);
     if (!fs.existsSync(dir)) return;
     fs.readdirSync(dir).forEach(nombre => {
@@ -86,7 +87,7 @@ async function cifrar(texto, pass, salB64) {
   const salida = plantilla.replace('"__CIFRADO__"', () => JSON.stringify(sobre));
   fs.writeFileSync(path.join(ROOT, 'index.html'), salida);
   const mb = n => (n / 1048576).toFixed(2) + ' MB';
-  const billetes = Object.keys(lista).filter(k => k.startsWith('billetes/')).length;
-  console.log(`index.html: ${mb(Buffer.byteLength(salida))} (${Object.keys(lista).length - billetes} mapas, `
-    + `${billetes} billetes), cifrado.`);
+  const cuantos = carpeta => Object.keys(lista).filter(k => k.startsWith(carpeta + '/')).length;
+  console.log(`index.html: ${mb(Buffer.byteLength(salida))} (${cuantos('mapas')} mapas, ${cuantos('billetes')} billetes, `
+    + `${cuantos('guias')} imágenes de guías), cifrado.`);
 })();
