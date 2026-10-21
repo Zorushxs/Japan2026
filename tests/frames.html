@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Capturas a 390 px: frames.html?p=<página>&h=<hash>&t=light|dark[&alto=px][&modo=resumen|detalle] (sin t, el tema del sistema). -->
+<!-- Capturas a 390 px: frames.html?p=<página>&h=<hash>&t=light|dark[&alto=px][&ancho=px][&modo=resumen|detalle] (sin t, el tema del sistema). -->
 <html><head><meta charset="utf-8"><style>body{margin:0;background:#888}iframe{border:0;width:390px;height:1700px;display:block}</style></head>
 <body><script>
 const q = new URLSearchParams(location.search);
@@ -8,5 +8,6 @@ try { if (q.get('modo')) localStorage.setItem('viaje:modo', q.get('modo')); } ca
 const f = document.createElement('iframe');
 f.src = (q.get('p') || '../app/index.html') + '#' + (q.get('h') || '/');
 if (q.get('alto')) f.style.height = q.get('alto') + 'px';
+if (q.get('ancho')) f.style.width = q.get('ancho') + 'px';
 document.body.append(f);
 </script></body></html>

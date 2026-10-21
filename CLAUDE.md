@@ -25,11 +25,11 @@ concretas, sitios, alojamientos, nombres).
 - HTML, CSS y JS sin dependencias, mobile-first, tema claro/oscuro. Textos de la interfaz en castellano; comentarios del
   código en castellano.
 - Scripts clásicos con un IIFE que expone un objeto global: `U` (util), `Datos`, `Piezas`, `Calendario`, `Dia`,
-  `Excursiones`, `Billetes`, `Info`, `Mapa`, `App`. El orden de carga es el de [app/index.html](app/index.html).
+  `Excursiones`, `Billetes`, `Info`, `Mapa`, `Guia`, `Alojamientos`, `App`. El orden de carga es el de [app/index.html](app/index.html).
 - `U.html` escapa solo; `U.rich` admite `**negrita**` y `*cursiva*` en los textos de los datos. Clics con
   `U.onActions(root, { nombre(el, e) {…} })` y `data-act`.
 - Pantallas `{ nav, render(root, arg), key(e) }`. Rutas: `#/`, `#/dia/AAAA-MM-DD`, `#/hoy`, `#/excursiones`,
-  `#/excursion/<id>`, `#/billetes[/<id>]`, `#/info`, `#/mapa` (My Maps incrustado; `VIAJE.mapaGoogle`).
+  `#/excursion/<id>`, `#/billetes[/<id>]`, `#/info`, `#/mapa` (My Maps incrustado; `VIAJE.mapaGoogle`), `#/alojamientos`, `#/guia/<id>`.
 - `Datos` ([app/js/datos.js](app/js/datos.js)) no toca el DOM: Node también lo carga (tools/comun.js) para los mapas
   y las comprobaciones.
 - Los commits los hace el usuario. Estilo: en inglés, `Add: …` / `Fix: …`.

@@ -13,7 +13,7 @@ const Calendario = (() => {
       ${meses().map(mes)}
       <h2 class="h2">Día a día</h2>
       ${V.bloques.map(bloque)}
-      <a class="link-info" href="#/info">${U.ICON.info}<span>Alojamientos, notas del plan y consejos</span></a>`;
+      <a class="link-info" href="#/info">${U.ICON.info}<span>Notas del plan, guías y consejos</span></a>`;
   }
 
   // «Faltan 4 días», «Día 3 de 21» o «Viaje terminado».

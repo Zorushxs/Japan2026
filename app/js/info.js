@@ -7,9 +7,6 @@ const Info = (() => {
     root.innerHTML = html`
       <a class="volver" href="#/">${U.ICON.left}<span>Calendario</span></a>
       <h1 class="h">Notas del plan</h1>
-      <h2 class="h2">Alojamientos</h2>
-      <div class="alojamientos">${Datos.estancias().map(e => Piezas.alojamiento(e.clave,
-        `${U.fmtShort(e.desde)} → ${U.fmtShort(e.hasta)}`, 'transit'))}</div>
       ${(Datos.V.guias || []).length ? html`<h2 class="h2">Guías</h2>
         <div class="billetes">${Datos.V.guias.map(Piezas.guia)}</div>` : ''}
       <h2 class="h2">El plan</h2>

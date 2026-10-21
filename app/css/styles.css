@@ -68,7 +68,7 @@ p { margin: 8px 0; }
 .icon-btn.off { opacity: .3; }
 
 .nav {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: grid; grid-template-columns: repeat(5, 1fr);
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: grid; grid-template-columns: repeat(6, 1fr);
   background: var(--panel); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom);
 }
 .nav a {
@@ -359,3 +359,11 @@ iframe.mapa-google {
 .plan.resumen .paso { padding: 7px 0; }
 .plan.resumen .nota .cuerpo { padding: 6px 10px; }
 .billetes-dia { margin-top: 8px; }
+/* Seis pestañas: en pantallas estrechas, letra más pequeña para que quepa «Alojamientos». */
+@media (max-width: 759px) {
+  .nav a { padding: 8px 0 9px; font-size: 10.5px; letter-spacing: -.01em; }
+}
+.aloj-actual .estancia { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+@media (max-width: 370px) {
+  .nav a { font-size: 9.5px; letter-spacing: -.02em; }
+}
