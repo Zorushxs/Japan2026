@@ -27,12 +27,12 @@ const Dia = (() => {
         <h1 class="h dia-titulo">${d.titulo}</h1>
         <div class="row">${Piezas.zona(d.zona)}${d.porDefinir ? html`<span class="tag-def">Por definir</span>` : ''}</div>
         ${guias(d)}
+        ${billetes.length ? html`<div class="billetes billetes-dia">${billetes.map(Piezas.billete)}</div>` : ''}
         ${estancia(d)}
         ${rutaCoche(d)}
         ${mapas.map(m => Piezas.mapa(m, Datos.modo(d.zona)))}
         ${Piezas.cabeceraPlan()}
         ${Piezas.plan(d.plan, numeros)}
-        ${billetes.length ? html`<h2 class="h2">Billetes</h2><div class="billetes">${billetes.map(Piezas.billete)}</div>` : ''}
         ${excursiones(d)}
       </div>`;
   }
