@@ -45,7 +45,8 @@ concretas, sitios, alojamientos, nombres).
   `corto` (una línea, sin subpuntos); en detalle, el texto entero y, debajo, el `info` de cada lugar (qué es).
 - **Lugar**: `nombre`, `info?` (qué es, sale en detalle), `q` (búsqueda de Google Maps), `lat`/`lon` opcionales (sin
   ellas no sale en la captura).
-- **Alojamiento** (`alojamientos.<CLAVE>`): `nombre`, `direccion` (es la búsqueda de Google Maps), `notas?`, `lat`/`lon`.
+- **Alojamiento** (`alojamientos.<CLAVE>`): `nombre`, `direccion`, `q?` (búsqueda de Google Maps, p. ej. coordenadas
+  exactas; si no hay, la dirección), `notas?`, `lat`/`lon`.
   En el plan se nombra como lugar `'aloj:<CLAVE>'` (sale con una casa, sin número). El día con `alojamiento` es el del
   check-in; `Datos.duerme`/`despierta` dicen dónde se duerme cada noche, y cada día enseña su alojamiento.
 - **Días de coche**: botón con la ruta entera (del alojamiento donde te levantas, por las paradas del plan, hasta donde

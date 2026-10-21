@@ -14,7 +14,7 @@ const Datos = (() => {
   function lugar(id) {
     if (String(id).startsWith('aloj:')) {
       const a = V.alojamientos[id.slice(5)];
-      return a ? { nombre: a.nombre, q: a.direccion, lat: a.lat, lon: a.lon, casa: true } : { nombre: id };
+      return a ? { nombre: a.nombre, q: a.q || a.direccion, lat: a.lat, lon: a.lon, casa: true } : { nombre: id };
     }
     return V.lugares[id] || { nombre: id };
   }
