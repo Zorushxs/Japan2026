@@ -21,6 +21,7 @@ const Datos = (() => {
   const existeLugar = id => (String(id).startsWith('aloj:') ? Boolean(V.alojamientos[id.slice(5)]) : Boolean(V.lugares[id]));
   const zona = id => V.zonas[id] || { nombre: id, color: '#888' };
   const billete = id => V.billetes.find(b => b.id === id);
+  const guia = id => (V.guias || []).find(g => g.id === id);
   const bloque = fecha => V.bloques.find(b => fecha >= b.desde && fecha <= b.hasta);
   const alojamiento = id => (V.alojamientos[id] || { nombre: id });
   // Dónde dormimos la noche de un día: el último alojamiento que empieza ese día o antes.
@@ -146,7 +147,7 @@ const Datos = (() => {
   }
 
   return {
-    V, dias, dia, indice, excursion, lugar, existeLugar, zona, billete, bloque, alojamiento, diasDe,
+    V, dias, dia, indice, excursion, lugar, existeLugar, zona, billete, guia, bloque, alojamiento, diasDe,
     duerme, despierta, estancias, rutaCoche,
     lugaresDe, mapasDia, mapasExcursion, numeros, todosLosMapas,
     archivo, imagenMapa, archivosBillete, billetesDia,

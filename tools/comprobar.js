@@ -22,6 +22,7 @@ function comprobar() {
     esperado = addDay(d.fecha);
     if (!V.zonas[d.zona]) errores.push(`Día ${d.fecha}: no existe la zona «${d.zona}»`);
     if (d.alojamiento && !V.alojamientos[d.alojamiento]) errores.push(`Día ${d.fecha}: no existe el alojamiento «${d.alojamiento}»`);
+    (d.guias || []).forEach(id => { if (!Datos.guia(id)) errores.push(`Día ${d.fecha}: no existe la guía «${id}»`); });
     (d.excursiones || []).forEach(id => { if (!Datos.excursion(id)) errores.push(`Día ${d.fecha}: no existe la excursión «${id}»`); });
     pasos(`Día ${d.fecha}`, d.plan);
     if (d.rutaCoche) [d.rutaCoche.desde, d.rutaCoche.hasta].filter(Boolean).forEach(id => {
@@ -30,6 +31,10 @@ function comprobar() {
     mapas(`Día ${d.fecha}`, d);
   });
   if (V.dias.length && V.dias[V.dias.length - 1].fecha !== V.fin) errores.push(`El último día no es ${V.fin}`);
+
+  (V.guias || []).forEach(g => g.bloques.forEach(b => (b.lugares || []).forEach(id => {
+    if (!Datos.existeLugar(id)) errores.push(`Guía ${g.id}: no existe el lugar «${id}»`);
+  })));
 
   V.excursiones.forEach(e => {
     if (!V.zonas[e.zona]) errores.push(`Excursión ${e.id}: no existe la zona «${e.zona}»`);

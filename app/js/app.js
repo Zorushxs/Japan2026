@@ -2,7 +2,7 @@
 const App = (() => {
   const { $ } = U;
   const ROUTES = { '': Calendario, dia: Dia, excursiones: Excursiones, excursion: Excursiones, billetes: Billetes,
-    info: Info, mapa: Mapa };
+    info: Info, mapa: Mapa, guia: Guia };
   let current = null;
   let lastHash = null;
 

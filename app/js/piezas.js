@@ -100,8 +100,15 @@ const Piezas = (() => {
     </div>`;
   }
 
+  // Tarjeta de una guía (p. ej. el envío de maletas). destacada: con el color de aviso, para lo importante del día.
+  const guia = (g, destacada) => html`<a class="billete ${destacada ? 'guia-destacada' : ''}" href="#/guia/${g.id}">
+    <span class="billete-ico">${g.emoji}</span>
+    <span class="billete-txt"><b>${g.titulo}</b>${g.resumen ? html`<small>${rich(g.resumen)}</small>` : ''}</span>
+    <span class="billete-estado">Ver</span>
+  </a>`;
+
   // Chip con el color de la zona.
   const zona = id => html`<span class="zona" style="--z:${Datos.zona(id).color}">${Datos.zona(id).nombre}</span>`;
 
-  return { plan, mapa, billete, excursion, zona, chipBillete, alojamiento };
+  return { plan, mapa, billete, excursion, zona, chipBillete, chipLugar, alojamiento, guia };
 })();

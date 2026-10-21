@@ -26,6 +26,7 @@ const Dia = (() => {
         </div>
         <h1 class="h dia-titulo">${d.titulo}</h1>
         <div class="row">${Piezas.zona(d.zona)}${d.porDefinir ? html`<span class="tag-def">Por definir</span>` : ''}</div>
+        ${guias(d)}
         ${estancia(d)}
         ${rutaCoche(d)}
         ${mapas.map(m => Piezas.mapa(m, Datos.modo(d.zona)))}
@@ -59,6 +60,13 @@ const Dia = (() => {
     if (!ruta || ruta.length < 2) return '';
     return html`<a class="btn ruta-dia" href="${Datos.urlRuta(ruta, 'driving')}" target="_blank" rel="noopener">
       ${ICON.route}<span>Ruta completa del día en coche</span></a>`;
+  }
+
+  // Las guías del día (p. ej. el envío de maletas) van arriba del todo y destacadas: son lo que no se puede olvidar.
+  function guias(d) {
+    const lista = (d.guias || []).map(Datos.guia).filter(Boolean);
+    if (!lista.length) return '';
+    return html`<div class="guias-dia">${lista.map(g => Piezas.guia(g, true))}</div>`;
   }
 
   function excursiones(d) {

@@ -300,3 +300,31 @@ iframe.mapa-google {
 /* ---------- Notas del plan ---------- */
 .consejos { padding-left: 20px; }
 .consejos li { margin: 8px 0; }
+
+/* ---------- Guías ---------- */
+.billete-ico { font-size: 20px; line-height: 1; }
+.guia-nota .cuerpo { margin: 6px 0 4px; }
+.guia-lista { padding-left: 20px; }
+.guia-lista li { margin: 6px 0; }
+.guia-tabla { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 15px; }
+.guia-tabla th, .guia-tabla td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+.guia-tabla th { font-size: 13px; color: var(--mute); }
+.jp-card { margin: 12px 0; padding: 14px; border-radius: var(--r); border: 1px solid var(--line); background: var(--panel); }
+.jp-texto { margin: 0; font: 17px/1.7 var(--jp); white-space: pre-line; }
+.jp-es { margin-top: 10px; color: var(--mute); font-size: 14px; }
+.jp-es p { white-space: pre-line; }
+.jp-es summary { cursor: pointer; font-weight: 600; }
+/* Para enseñar en un mostrador: pantalla completa, fondo blanco y letra grande. */
+.jp-grande {
+  width: 100vw; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 24px 20px; border: 0;
+  background: #fff; color: #111; overflow: auto;
+}
+.jp-grande p { margin: 0; font: 500 24px/1.75 var(--jp); white-space: pre-line; }
+.jp-grande small { display: block; margin-top: 24px; color: #888; text-align: center; }
+/* Guía destacada arriba del día (lo que no se puede olvidar). */
+.guias-dia { display: grid; gap: 8px; margin-top: 14px; }
+.guia-destacada {
+  border: 2px solid var(--importante); background: color-mix(in srgb, var(--importante) 9%, var(--panel));
+}
+.guia-destacada .billete-estado { color: var(--importante); }
+.guia-destacada .billete-txt b { font-size: 16.5px; }
