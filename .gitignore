@@ -1,0 +1,24 @@
+# ── Datos del viaje: NUNCA al repo (van cifrados dentro de index.html) ──
+# Itinerario, capturas de mapas, billetes, contraseña y sal
+privado/
+
+# Por si algún archivo privado acaba fuera de privado/ por error
+contraseña.txt
+contrasena.txt
+sal.txt
+viaje.js
+billetes/
+*.pdf
+
+# ── Notas locales de Claude ──
+CLAUDE.local.md
+
+# ── Pruebas ──
+tests/*.png
+
+# ── Sistema y editor ──
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+node_modules/

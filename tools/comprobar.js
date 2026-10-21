@@ -1,0 +1,64 @@
+// Comprueba privado/viaje.js: que cada lugar, billete y excursión nombrados existan, que los días vayan seguidos del
+// inicio al fin y que cada zona exista. tools/build.js lo pasa antes de compilar. Uso: node tools/comprobar.js
+const fs = require('fs');
+const path = require('path');
+const { PRIVADO, cargarDatos } = require('./comun');
+
+function comprobar() {
+  const { VIAJE: V, Datos } = cargarDatos();
+  const errores = [];
+  const pasos = (donde, plan) => plan.forEach((p, i) => {
+    (p.lugares || []).forEach(id => { if (!Datos.existeLugar(id)) errores.push(`${donde}, paso ${i + 1}: no existe el lugar «${id}»`); });
+    if (p.billete && !Datos.billete(p.billete)) errores.push(`${donde}, paso ${i + 1}: no existe el billete «${p.billete}»`);
+    if (!p.texto) errores.push(`${donde}, paso ${i + 1}: sin texto`);
+  });
+  const mapas = (donde, entidad) => (entidad.mapas || []).forEach(m => m.lugares.forEach(id => {
+    if (!Datos.existeLugar(id)) errores.push(`${donde}, mapa «${m.titulo}»: no existe el lugar «${id}»`);
+  }));
+
+  let esperado = V.inicio;
+  V.dias.forEach(d => {
+    if (d.fecha !== esperado) errores.push(`Día ${d.fecha}: tocaba ${esperado}`);
+    esperado = addDay(d.fecha);
+    if (!V.zonas[d.zona]) errores.push(`Día ${d.fecha}: no existe la zona «${d.zona}»`);
+    if (d.alojamiento && !V.alojamientos[d.alojamiento]) errores.push(`Día ${d.fecha}: no existe el alojamiento «${d.alojamiento}»`);
+    (d.excursiones || []).forEach(id => { if (!Datos.excursion(id)) errores.push(`Día ${d.fecha}: no existe la excursión «${id}»`); });
+    pasos(`Día ${d.fecha}`, d.plan);
+    if (d.rutaCoche) [d.rutaCoche.desde, d.rutaCoche.hasta].filter(Boolean).forEach(id => {
+      if (!Datos.existeLugar(id)) errores.push(`Día ${d.fecha}: rutaCoche, no existe el lugar «${id}»`);
+    });
+    mapas(`Día ${d.fecha}`, d);
+  });
+  if (V.dias.length && V.dias[V.dias.length - 1].fecha !== V.fin) errores.push(`El último día no es ${V.fin}`);
+
+  V.excursiones.forEach(e => {
+    if (!V.zonas[e.zona]) errores.push(`Excursión ${e.id}: no existe la zona «${e.zona}»`);
+    pasos(`Excursión ${e.id}`, e.plan);
+    mapas(`Excursión ${e.id}`, e);
+  });
+
+  const ids = new Set();
+  V.billetes.forEach(b => {
+    if (ids.has(b.id)) errores.push(`Billete repetido: ${b.id}`);
+    ids.add(b.id);
+    Datos.archivosBillete(b).forEach(a => {
+      if (!fs.existsSync(path.join(PRIVADO, a.ruta))) errores.push(`Billete ${b.id}: no está el archivo privado/${a.ruta}`);
+    });
+  });
+  return errores;
+}
+
+function addDay(day) {
+  const [y, m, d] = day.split('-').map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d + 1));
+  return date.toISOString().slice(0, 10);
+}
+
+module.exports = { comprobar };
+
+if (require.main === module) {
+  const errores = comprobar();
+  errores.forEach(e => console.error('✗ ' + e));
+  console.log(errores.length ? `${errores.length} errores.` : 'Datos correctos.');
+  process.exit(errores.length ? 1 : 0);
+}

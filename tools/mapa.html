@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!-- Lo usa tools/mapas.js: dibuja cada mapa con MapLibre y los mapas vectoriales de OpenFreeMap (nítidos, al doble
+     de resolución, con los nombres en letras latinas), le pone encima la línea entre las paradas y los puntos
+     numerados, encuadrados y centrados, y le devuelve la imagen (WebP). -->
+<html><head><meta charset="utf-8"><title>Mapas</title>
+<style>body { margin: 0; } #m { width: 640px; height: 400px; }</style>
+</head>
+<body>
+<div id="m"></div>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+(async () => {
+  const W = 640, H = 400, ESCALA = 2, PAD = 64, ZMAX = 15.5;
+  const ESTILO = 'https://tiles.openfreemap.org/styles/liberty';
+  // Nombres en castellano o inglés si los hay; si no, transliterados (Kyoto, no 京都).
+  const NOMBRE = ['coalesce', ['get', 'name:es'], ['get', 'name_en'], ['get', 'name:latin'], ['get', 'name']];
+
+  const estilo = await (await fetch(ESTILO)).json();
+  estilo.layers.forEach(capa => {
+    if (capa.layout && capa.layout['text-field']) capa.layout['text-field'] = NOMBRE;
+  });
+  const map = new maplibregl.Map({
+    container: 'm', style: estilo, pixelRatio: ESCALA, preserveDrawingBuffer: true, attributionControl: false,
+    interactive: false, fadeDuration: 0,
+  });
+  await new Promise(resolve => map.once('load', resolve));
+
+  const salida = document.createElement('canvas');
+  salida.width = W * ESCALA;
+  salida.height = H * ESCALA;
+  const ctx = salida.getContext('2d');
+
+  // Espera a que el mapa haya cargado y pintado todo.
+  const quieto = () => new Promise(resolve => {
+    map.once('idle', resolve);
+    map.triggerRepaint();
+  });
+
+  function encuadrar(puntos) {
+    if (puntos.length === 1) {
+      map.jumpTo({ center: [puntos[0].lon, puntos[0].lat], zoom: 15 });
+      return;
+    }
+    const bounds = new maplibregl.LngLatBounds();
+    puntos.forEach(p => bounds.extend([p.lon, p.lat]));
+    map.fitBounds(bounds, { padding: PAD, maxZoom: ZMAX, duration: 0 });
+  }
+
+  // Casita blanca (el alojamiento) centrada en x, y; s = tamaño.
+  function casa(x, y, s) {
+    ctx.beginPath();
+    ctx.moveTo(x, y - s);
+    ctx.lineTo(x + s, y - s * 0.08);
+    ctx.lineTo(x + s * 0.7, y - s * 0.08);
+    ctx.lineTo(x + s * 0.7, y + s * 0.85);
+    ctx.lineTo(x - s * 0.7, y + s * 0.85);
+    ctx.lineTo(x - s * 0.7, y - s * 0.08);
+    ctx.lineTo(x - s, y - s * 0.08);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function marcas(mapa) {
+    const R = 17 * ESCALA;
+    const pts = mapa.puntos.map(p => {
+      const xy = map.project([p.lon, p.lat]);
+      return { ...p, x: xy.x * ESCALA, y: xy.y * ESCALA };
+    });
+    // Línea discontinua entre las paradas, en orden.
+    if (pts.length > 1) {
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      pts.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+      ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(255,255,255,.9)';
+      ctx.lineWidth = 5 * ESCALA;
+      ctx.stroke();
+      ctx.setLineDash([7 * ESCALA, 6 * ESCALA]);
+      ctx.strokeStyle = mapa.color;
+      ctx.lineWidth = 3 * ESCALA;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    // Puntos. Si uno taparía a otro, se aparta un poco (la línea sigue en el sitio real).
+    const puestos = [];
+    pts.forEach(real => {
+      let p = real;
+      for (let i = 0; i < 18 && puestos.some(q => Math.hypot(q.x - p.x, q.y - p.y) < R * 2.05); i++) {
+        const ang = -Math.PI / 4 + i * (Math.PI / 3), radio = R * 2.15 + Math.floor(i / 6) * R;
+        p = { ...real, x: real.x + Math.cos(ang) * radio, y: real.y + Math.sin(ang) * radio };
+      }
+      puestos.push(p);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, R, 0, Math.PI * 2);
+      ctx.fillStyle = p.casa ? '#1f1c19' : mapa.color;
+      ctx.shadowColor = 'rgba(0,0,0,.35)';
+      ctx.shadowBlur = 6 * ESCALA;
+      ctx.shadowOffsetY = 1.5 * ESCALA;
+      ctx.fill();
+      ctx.shadowColor = 'transparent';
+      ctx.lineWidth = 3 * ESCALA;
+      ctx.strokeStyle = '#fff';
+      ctx.stroke();
+      ctx.fillStyle = '#fff';
+      if (p.casa) {
+        casa(p.x, p.y, R * 0.55);
+        return;
+      }
+      ctx.font = `700 ${19 * ESCALA}px system-ui, "Segoe UI", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(p.n), p.x, p.y + ESCALA);
+    });
+    // Atribución (obligatoria).
+    const texto = '© OpenFreeMap © OpenStreetMap';
+    ctx.font = `${10 * ESCALA}px system-ui, sans-serif`;
+    const ancho = ctx.measureText(texto).width + 12 * ESCALA;
+    ctx.fillStyle = 'rgba(255,255,255,.8)';
+    ctx.fillRect(salida.width - ancho, salida.height - 16 * ESCALA, ancho, 16 * ESCALA);
+    ctx.fillStyle = '#555';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(texto, salida.width - 6 * ESCALA, salida.height - 8 * ESCALA);
+  }
+
+  const lista = await (await fetch('/trabajos')).json();
+  for (const mapa of lista) {
+    encuadrar(mapa.puntos);
+    await quieto();
+    ctx.drawImage(map.getCanvas(), 0, 0, salida.width, salida.height);
+    marcas(mapa);
+    await fetch('/guardar/' + encodeURIComponent(mapa.id), { method: 'POST', body: salida.toDataURL('image/webp', 0.8) });
+  }
+  await fetch('/fin', { method: 'POST' });
+})().catch(err => fetch('/fin', { method: 'POST', body: 'ERROR ' + (err && err.stack || err) }));
+</script>
+</body></html>

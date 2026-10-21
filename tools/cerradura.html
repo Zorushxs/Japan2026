@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<!-- Plantilla de la página publicada (index.html). tools/build.js pone en #cifrado la app entera cifrada (AES-256-GCM,
+     clave sacada de la contraseña con PBKDF2-SHA-256). Con la contraseña buena se descifra en el navegador y se pinta.
+     Todo el código va en una función: la app descifrada se carga en esta misma ventana y no debe chocar con nada. -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Viaje</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<meta name="theme-color" content="#f6f3ee">
+<script>
+  try { const th = localStorage.getItem('viaje:tema'); if (th) document.documentElement.dataset.theme = th; } catch {}
+</script>
+<style>
+  :root { --bg: #f6f3ee; --panel: #fffdf9; --ink: #1f1c19; --mute: #71695f; --line: #e5ded3; --accent: #b3402a; --err: #b3352f; }
+  :root[data-theme="dark"] { --bg: #141312; --panel: #1d1b19; --ink: #ece6dc; --mute: #a0978b; --line: #312d29; --accent: #f08a6c; --err: #ff8a7a; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #141312; --panel: #1d1b19; --ink: #ece6dc; --mute: #a0978b; --line: #312d29; --accent: #f08a6c; --err: #ff8a7a; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 16px;
+    background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  form {
+    width: 100%; max-width: 360px; padding: 28px 22px; border-radius: 18px; background: var(--panel);
+    border: 1px solid var(--line); display: grid; gap: 14px; text-align: center;
+  }
+  .k {
+    justify-self: center; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px;
+    background: var(--accent); color: var(--bg); font: 500 28px/1 "Hiragino Sans", "Yu Gothic UI", Meiryo, sans-serif;
+  }
+  h1 { margin: 0; font: 700 22px/1.2 Georgia, serif; }
+  input {
+    width: 100%; padding: 12px 14px; border-radius: 11px; border: 1px solid var(--line); background: var(--bg);
+    color: var(--ink); font: inherit;
+  }
+  input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  button {
+    padding: 12px; border-radius: 11px; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+    font: inherit; font-weight: 600; cursor: pointer;
+  }
+  button[type="submit"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  button:disabled { opacity: .6; cursor: default; }
+  #recordar[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  #recordar[aria-pressed="true"]::before { content: "✓ "; }
+  .msg { min-height: 1.5em; margin: 0; font-size: 14px; color: var(--err); }
+  .hint { margin: 0; font-size: 13px; color: var(--mute); }
+</style>
+</head>
+<body>
+<form id="cerradura" autocomplete="off">
+  <span class="k" aria-hidden="true">旅</span>
+  <h1>Viaje privado</h1>
+  <input id="pass" type="password" placeholder="Contraseña" aria-label="Contraseña" autocomplete="current-password" required>
+  <button type="button" id="recordar" aria-pressed="false">Recordar en este dispositivo</button>
+  <button type="submit" id="entrar">Entrar</button>
+  <p class="msg" id="msg" role="alert"></p>
+  <p class="hint">Recuérdala solo en tus dispositivos. El candado de arriba la olvida.</p>
+</form>
+<script id="cifrado" type="application/json">"__CIFRADO__"</script>
+<script>
+(() => {
+  const CLAVE = 'viaje:clave';
+  const datos = JSON.parse(document.getElementById('cifrado').textContent);
+  const $ = id => document.getElementById(id);
+
+  // Para que funcione sin conexión (sw.js guarda esta página). En local (127.0.0.1), para poder probarlo.
+  const seguro = location.protocol === 'https:' || ['127.0.0.1', 'localhost'].includes(location.hostname);
+  if ('serviceWorker' in navigator && seguro) navigator.serviceWorker.register('sw.js').catch(() => {});
+
+  function bytes(base64) {
+    const texto = atob(base64), out = new Uint8Array(texto.length);
+    for (let i = 0; i < texto.length; i++) out[i] = texto.charCodeAt(i);
+    return out;
+  }
+  const base64 = buffer => btoa(String.fromCharCode(...new Uint8Array(buffer)));
+
+  async function derivar(pass, exportable) {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: bytes(datos.sal), iterations: datos.iter, hash: 'SHA-256' },
+      base, { name: 'AES-GCM', length: 256 }, exportable, ['decrypt']);
+  }
+
+  async function descifrar(clave) {
+    const plano = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes(datos.iv) }, clave, bytes(datos.datos));
+    return new TextDecoder().decode(plano);
+  }
+
+  // Sustituye esta página por la app descifrada (en la misma ventana: el enlace con #/dia/... se mantiene).
+  // Espera a que la página haya acabado de cargar: si no, document.open() no la vacía y document.write() añade la app
+  // debajo de la cerradura.
+  const cargada = () => (document.readyState === 'complete'
+    ? Promise.resolve()
+    : new Promise(resolve => addEventListener('load', resolve, { once: true })));
+
+  async function mostrar(html) {
+    // La app solo se puede escribir una vez por ventana (su código declara constantes globales). Si ya se escribió,
+    // se recarga de cero; con «Recordar» se abrirá sola.
+    await cargada();
+    if (window.CERRADURA) {
+      location.reload();
+      return;
+    }
+    window.CERRADURA = true;
+    document.open();
+    document.write(html);
+    document.close();
+  }
+
+  async function conGuardada() {
+    let guardada = null;
+    try { guardada = localStorage.getItem(CLAVE); } catch {}
+    if (!guardada) return false;
+    try {
+      const clave = await crypto.subtle.importKey('raw', bytes(guardada), 'AES-GCM', false, ['decrypt']);
+      const html = await descifrar(clave);
+      await mostrar(html);
+      return true;
+    } catch {
+      // La contraseña ha cambiado: se vuelve a pedir.
+      try { localStorage.removeItem(CLAVE); } catch {}
+      return false;
+    }
+  }
+
+  $('recordar').onclick = () => {
+    const on = $('recordar').getAttribute('aria-pressed') !== 'true';
+    $('recordar').setAttribute('aria-pressed', on);
+  };
+
+  function estado(texto) {
+    $('entrar').textContent = texto;
+  }
+  function fallo(texto) {
+    $('msg').textContent = texto;
+    $('entrar').disabled = false;
+    estado('Entrar');
+    $('pass').select();
+  }
+
+  $('cerradura').onsubmit = async event => {
+    event.preventDefault();
+    const recordar = $('recordar').getAttribute('aria-pressed') === 'true';
+    // Quita espacios del principio y del final (al copiar y pegar suelen colarse).
+    const pass = $('pass').value.trim();
+    $('entrar').disabled = true;
+    $('msg').textContent = '';
+    estado('Comprobando…');
+    // Deja que se pinte «Comprobando…» antes del cálculo.
+    await new Promise(resolve => setTimeout(resolve, 30));
+    let html;
+    try {
+      const clave = await derivar(pass, recordar);
+      html = await descifrar(clave);
+      if (recordar) {
+        try { localStorage.setItem(CLAVE, base64(await crypto.subtle.exportKey('raw', clave))); } catch {}
+      }
+    } catch (error) {
+      // AES-GCM falla con OperationError si la clave no es la buena.
+      fallo(error && error.name === 'OperationError' ? 'Contraseña incorrecta.' : 'No se ha podido abrir: ' + error);
+      return;
+    }
+    estado('Abriendo…');
+    await new Promise(resolve => setTimeout(resolve, 30));
+    try {
+      await mostrar(html);
+    } catch (error) {
+      fallo('No se ha podido abrir: ' + error);
+    }
+  };
+
+  if (!window.crypto || !crypto.subtle) {
+    $('msg').textContent = 'Este navegador no puede descifrar la página (hace falta https).';
+    $('entrar').disabled = true;
+    return;
+  }
+  conGuardada().then(ok => { if (!ok) $('pass').focus(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!-- Prueba de la página cifrada (la lanza tests/cerradura.js): abre ../index.html y, según ?modo=:
+     buena    → la contraseña buena abre la app (una sola, sin restos de la cerradura)
+     mala     → una contraseña errónea no entra
+     recordar → con «Recordar», al recargar se abre sola y bien
+     Envía el resultado a /resultado. -->
+<html><head><meta charset="utf-8"></head><body>
+<pre id="out">ESPERANDO</pre>
+<iframe id="f" src="../index.html" style="width:390px;height:800px"></iframe>
+<script>
+const q = new URLSearchParams(location.search);
+const modo = q.get('modo');
+const out = document.getElementById('out');
+const f = document.getElementById('f');
+const d = () => f.contentDocument;
+const wait = (cond, ms) => new Promise((ok, ko) => {
+  const t0 = Date.now();
+  (function loop() {
+    let si = false;
+    try { si = cond(); } catch {}
+    if (si) ok(); else if (Date.now() - t0 > ms) ko(new Error('tiempo')); else setTimeout(loop, 100);
+  })();
+});
+const cargado = () => new Promise(resolve => { f.onload = () => { f.onload = null; resolve(); }; });
+
+// La app está bien si hay calendario, una sola cabecera y nada de la cerradura.
+function appBien() {
+  const tops = d().querySelectorAll('.top').length, cerradura = d().getElementById('cerradura');
+  const dias = d().querySelectorAll('.cel.viaje').length;
+  if (tops !== 1 || cerradura || !dias) throw new Error(`app rota: ${tops} cabeceras, cerradura=${!!cerradura}, ${dias} días`);
+  return `${dias} días`;
+}
+
+async function entrar(pass, recordar) {
+  d().getElementById('pass').value = pass;
+  if (recordar) d().getElementById('recordar').click();
+  d().getElementById('entrar').click();
+}
+
+(async () => {
+  try {
+    try { localStorage.removeItem('viaje:clave'); } catch {}
+    await cargado();
+    if (modo === 'mala') {
+      await entrar('otra cosa');
+      await wait(() => d().getElementById('msg').textContent, 20000);
+      out.textContent = 'OK mala: ' + d().getElementById('msg').textContent;
+    } else if (modo === 'recordar') {
+      await entrar(q.get('pass'), true);
+      await wait(() => d().querySelector('.mes'), 20000);
+      appBien();
+      const recarga = cargado();
+      f.contentWindow.location.reload();
+      await recarga;
+      await wait(() => d().querySelector('.mes'), 20000);
+      await new Promise(r => setTimeout(r, 1500));
+      out.textContent = 'OK recordar: al recargar se abre sola, ' + appBien();
+      try { localStorage.removeItem('viaje:clave'); } catch {}
+    } else {
+      await entrar(q.get('pass'));
+      await wait(() => d().querySelector('.mes'), 20000);
+      await new Promise(r => setTimeout(r, 500));
+      out.textContent = 'OK buena: ' + appBien();
+    }
+  } catch (e) { out.textContent = 'FALLO ' + modo + ': ' + e.message; }
+  fetch('/resultado', { method: 'POST', body: out.textContent });
+})();
+</script></body></html>
