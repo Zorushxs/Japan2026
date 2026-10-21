@@ -36,8 +36,8 @@ const Excursiones = (() => {
         <p class="resumen">${rich(e.resumen)}</p>
         ${dias.length ? html`<p class="hint">Desde ${e.desde}, ${dias.length > 1 ? 'para uno de estos días' : 'el'}:
           ${dias.map((d, i) => html`${i ? ', ' : ''}<a href="#/dia/${d.fecha}">${U.fmtShort(d.fecha)}</a>`)}</p>` : ''}
-        ${mapas.map(m => Piezas.mapa(m, 'transit'))}
-        <h2 class="h2">Plan</h2>
+        ${mapas.map(m => Piezas.mapa(m, null))}
+        ${Piezas.cabeceraPlan()}
         ${Piezas.plan(e.plan, Datos.numeros(mapas))}
       </div>`;
   }

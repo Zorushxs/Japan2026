@@ -328,3 +328,17 @@ iframe.mapa-google {
 }
 .guia-destacada .billete-estado { color: var(--importante); }
 .guia-destacada .billete-txt b { font-size: 16.5px; }
+
+/* ---------- Resumen | Detalle ---------- */
+.plan-cab { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 26px 0 10px; }
+.plan-cab .h2 { margin: 0; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--panel); }
+.seg button { border: 0; background: none; padding: 7px 14px; font-size: 14px; font-weight: 600; color: var(--mute); }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.lugar-info { margin-top: 8px; padding-left: 10px; border-left: 2px solid var(--line); font-size: 14px; color: var(--mute); }
+.lugar-info p { margin: 4px 0; }
+.lugar-info b { color: var(--ink); font-weight: 600; }
+/* En resumen, pasos más juntos. */
+.plan.resumen .paso { padding: 7px 0; }
+.plan.resumen .nota .cuerpo { padding: 6px 10px; }

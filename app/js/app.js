@@ -49,6 +49,14 @@ const App = (() => {
     replace(link.getAttribute('href'));
   });
 
+  // Botones Resumen | Detalle del plan: se guarda y se repinta la misma pantalla (sin volver arriba).
+  document.addEventListener('click', e => {
+    const boton = e.target.closest('[data-modo]');
+    if (!boton) return;
+    Piezas.cambiarModo(boton.dataset.modo);
+    route();
+  });
+
   document.addEventListener('keydown', e => {
     if (!current || !current.key || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.target.closest && e.target.closest('input, textarea, select')) return;

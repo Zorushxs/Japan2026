@@ -40,8 +40,11 @@ concretas, sitios, alojamientos, nombres).
 
 - **Día**: `fecha`, `zona`, `titulo`, `alojamiento?`, `equipaje?`, `porDefinir?`, `plan[]`, `excursiones?[]`, `mapas?`.
 - **Paso del plan**: `hora?`, `texto`, `tipo?` (`info | tiempo | aviso | importante | opcional | alternativa`, los
-  colores del documento original), `lugares?[]`, `sub?[]`, `billete?`.
-- **Lugar**: `nombre`, `q` (búsqueda de Google Maps), `lat`/`lon` opcionales (sin ellas no sale en la captura).
+  colores del documento original), `lugares?[]`, `sub?[]`, `billete?`, `corto?`.
+- **Resumen | Detalle** (botón junto a «Plan», `viaje:modo` en localStorage): en resumen solo salen los pasos con
+  `corto` (una línea, sin subpuntos); en detalle, el texto entero y, debajo, el `info` de cada lugar (qué es).
+- **Lugar**: `nombre`, `info?` (qué es, sale en detalle), `q` (búsqueda de Google Maps), `lat`/`lon` opcionales (sin
+  ellas no sale en la captura).
 - **Alojamiento** (`alojamientos.<CLAVE>`): `nombre`, `direccion` (es la búsqueda de Google Maps), `notas?`, `lat`/`lon`.
   En el plan se nombra como lugar `'aloj:<CLAVE>'` (sale con una casa, sin número). El día con `alojamiento` es el del
   check-in; `Datos.duerme`/`despierta` dicen dónde se duerme cada noche, y cada día enseña su alojamiento.

@@ -23,25 +23,57 @@ const Piezas = (() => {
       ${ICON.ticket}<span>${b.titulo}</span>${tiene ? '' : html`<em>pendiente</em>`}</a>`;
   };
 
-  // Un paso del plan. Los de tipo «tiempo» son una línea pequeña entre dos pasos.
+  // ---------- Resumen o detalle ----------
+  // «resumen»: solo los pasos con `corto`, en una línea. «detalle»: el texto entero, con las notas, los subpuntos y
+  // qué es cada sitio. Se recuerda en este navegador.
+  const MODO = 'viaje:modo';
+  function modo() {
+    try { return localStorage.getItem(MODO) === 'resumen' ? 'resumen' : 'detalle'; } catch { return 'detalle'; }
+  }
+  function cambiarModo(nuevo) {
+    try { localStorage.setItem(MODO, nuevo); } catch {}
+  }
+  // «Plan» con los botones Resumen | Detalle (App los atiende con data-modo).
+  const cabeceraPlan = () => html`<div class="plan-cab">
+    <h2 class="h2">Plan</h2>
+    <div class="seg" role="group" aria-label="Cómo ver el plan">
+      ${['resumen', 'detalle'].map(m => html`<button type="button" data-modo="${m}" aria-pressed="${modo() === m}">
+        ${m === 'resumen' ? 'Resumen' : 'Detalle'}</button>`)}
+    </div>
+  </div>`;
+
+  // Qué es cada sitio del paso (solo en detalle).
+  function infoLugares(lugares) {
+    const conInfo = lugares.filter(id => Datos.lugar(id).info);
+    if (!conInfo.length) return '';
+    return html`<div class="lugar-info">${conInfo.map(id =>
+      html`<p><b>${Datos.lugar(id).nombre}:</b> ${rich(Datos.lugar(id).info)}</p>`)}</div>`;
+  }
+
+  // Un paso del plan. Los de tipo «tiempo» son una línea pequeña entre dos pasos. En resumen solo salen los que
+  // tienen `corto`, con ese texto.
   function paso(p, numeros) {
+    const resumen = modo() === 'resumen';
+    if (resumen && !p.corto) return '';
+    const texto = resumen ? p.corto : p.texto;
     const lugares = p.lugares || [];
     const extra = lugares.length || p.billete
       ? html`<div class="chips">${lugares.map(id => chipLugar(id, numeros))}${p.billete ? chipBillete(p.billete) : ''}</div>`
       : '';
-    if (p.tipo === 'tiempo') return html`<li class="paso tiempo"><p>${rich(p.texto)}</p></li>`;
+    if (p.tipo === 'tiempo') return html`<li class="paso tiempo"><p>${rich(texto)}</p></li>`;
     return html`<li class="paso ${p.tipo ? 'nota nota-' + p.tipo : ''}">
       ${p.hora ? html`<span class="hora">${p.hora}</span>` : ''}
       <div class="cuerpo">
         ${p.tipo ? html`<span class="etiqueta">${ETIQUETAS[p.tipo] || p.tipo}</span>` : ''}
-        <p>${rich(p.texto)}</p>
-        ${p.sub ? html`<ul class="sub">${p.sub.map(s => html`<li>${rich(s)}</li>`)}</ul>` : ''}
+        <p>${rich(texto)}</p>
+        ${p.sub && !resumen ? html`<ul class="sub">${p.sub.map(s => html`<li>${rich(s)}</li>`)}</ul>` : ''}
         ${extra}
+        ${resumen ? '' : infoLugares(lugares)}
       </div>
     </li>`;
   }
 
-  const plan = (pasos, numeros) => html`<ol class="plan">${pasos.map(p => paso(p, numeros))}</ol>`;
+  const plan = (pasos, numeros) => html`<ol class="plan ${modo()}">${pasos.map(p => paso(p, numeros))}</ol>`;
 
   // Captura del mapa: al tocarla, abre la ruta en Google Maps. Si la captura no existe todavía, solo queda el botón.
   function mapa(m, modo) {
@@ -110,5 +142,5 @@ const Piezas = (() => {
   // Chip con el color de la zona.
   const zona = id => html`<span class="zona" style="--z:${Datos.zona(id).color}">${Datos.zona(id).nombre}</span>`;
 
-  return { plan, mapa, billete, excursion, zona, chipBillete, chipLugar, alojamiento, guia };
+  return { plan, cabeceraPlan, cambiarModo, mapa, billete, excursion, zona, chipBillete, chipLugar, alojamiento, guia };
 })();
