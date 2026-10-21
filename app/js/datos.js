@@ -121,6 +121,15 @@ const Datos = (() => {
       + (modo ? '&travelmode=' + modo : '');
   }
   const modo = zonaId => (zonaId === 'coche' ? 'driving' : null);
+  // Mapa de Google My Maps del viaje (VIAJE.mapaGoogle, cualquier enlace suyo): { embed, abrir } o null.
+  function mapaGoogle() {
+    const mid = /[?&]mid=([\w-]+)/.exec(V.mapaGoogle || '');
+    if (!mid) return null;
+    return {
+      embed: 'https://www.google.com/maps/d/embed?mid=' + mid[1],
+      abrir: 'https://www.google.com/maps/d/viewer?mid=' + mid[1],
+    };
+  }
   // Cómo llegar a un sitio desde donde estés (Google pone tu ubicación como origen).
   const urlComoLlegar = (id, modoViaje) => 'https://www.google.com/maps/dir/?api=1&destination='
     + encodeURIComponent(consulta(id)) + '&travelmode=' + (modoViaje || 'transit');
@@ -141,6 +150,6 @@ const Datos = (() => {
     duerme, despierta, estancias, rutaCoche,
     lugaresDe, mapasDia, mapasExcursion, numeros, todosLosMapas,
     archivo, imagenMapa, archivosBillete, billetesDia,
-    urlLugar, urlRuta, urlComoLlegar, modo,
+    urlLugar, urlRuta, urlComoLlegar, modo, mapaGoogle,
   };
 })();

@@ -10,12 +10,26 @@ const Calendario = (() => {
       <p class="sub-h">${U.fmtShort(V.inicio)} – ${U.fmtShort(V.fin)} · ${Datos.dias.length} días</p>
       ${estado()}
       <div class="leyenda">${Object.keys(V.zonas).map(Piezas.zona)}</div>
-      ${V.mapaGoogle ? html`<a class="btn ruta-dia" href="${V.mapaGoogle}" target="_blank" rel="noopener">
-        ${U.ICON.pin}<span>Mapa del viaje en Google Maps</span></a>` : ''}
       ${meses().map(mes)}
+      ${mapaGoogle()}
       <h2 class="h2">Día a día</h2>
       ${V.bloques.map(bloque)}
       <a class="link-info" href="#/info">${U.ICON.info}<span>Alojamientos, notas del plan y consejos</span></a>`;
+  }
+
+  // El mapa de Google My Maps del viaje, incrustado (necesita conexión), y el botón para abrirlo en Google Maps.
+  function mapaGoogle() {
+    const mapa = Datos.mapaGoogle();
+    if (!mapa) return '';
+    return html`<section class="mapa-google">
+      <h2 class="h2">Mapa del viaje</h2>
+      <iframe src="${mapa.embed}" title="Mapa del viaje en Google Maps" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <div class="row">
+        <a class="btn-ruta" href="${mapa.abrir}" target="_blank" rel="noopener">${U.ICON.out}<span>Abrir en Google Maps</span></a>
+        <small class="hint">Necesita conexión.</small>
+      </div>
+    </section>`;
   }
 
   // «Faltan 4 días», «Día 3 de 21» o «Viaje terminado».
