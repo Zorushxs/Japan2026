@@ -585,3 +585,27 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .billete-nota { white-space: pre-line; }
 .lugar.enlace svg { color: var(--accent); }
 .sub .chips { margin-top: 4px; }
+
+/* Franja del grupo en el calendario. */
+.grupo { margin: 16px 0 4px; padding: 12px; border-radius: var(--r); border: 1px solid var(--line); background: var(--panel); }
+.grupo.sin-yo { border: 2px solid var(--accent); animation: llamar 1.6s ease-in-out infinite; }
+.grupo-cab { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.grupo-cab p { margin: 0; }
+.grupo-cab .btn-ruta { margin-left: 0; }
+.grupo-pide { color: var(--accent); }
+.grupo-caras { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; }
+.cara {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; padding: 4px 0 2px;
+  border: 0; border-radius: 10px; background: none; color: var(--mute); font-size: 10.5px; font-weight: 600;
+}
+.cara span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cara .avatar, .cara .marco { width: 30px; height: 30px; font-size: 13px; }
+.cara .marco { padding: 2px; }
+.cara .marco > .avatar { width: 100%; height: 100%; }
+.cara.yo-cara { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+.cara.yo-cara > .avatar, .cara.yo-cara > .marco { outline: 2.5px solid var(--accent); outline-offset: 2px; border-radius: 50%; }
+.grupo.sin-yo .cara { color: var(--ink); }
+@media (min-width: 560px) { .cara .avatar, .cara .marco { width: 40px; height: 40px; } .cara { font-size: 12px; } }
+.cara .sello, .cara .chispa { display: none; }
+.cara { font-size: 9.5px; letter-spacing: -.02em; }
+@media (min-width: 400px) { .cara { font-size: 10.5px; letter-spacing: 0; } }

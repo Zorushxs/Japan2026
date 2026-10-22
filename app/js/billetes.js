@@ -259,5 +259,6 @@ const Billetes = (() => {
     return mio ? asiento(mio) : '';
   }
 
-  return { nav: 'billetes', render, actual: () => actual, miAsiento };
+  // soy / ponerSoy / elegirSoy también los usa el calendario (la franja del grupo).
+  return { nav: 'billetes', render, actual: () => actual, miAsiento, soy, ponerSoy, elegirSoy };
 })();

@@ -5,15 +5,46 @@ const Calendario = (() => {
   const V = Datos.V;
 
   function render(root) {
+    U.onActions(root, {
+      // Sin elegir, tocar un avatar te elige; ya elegido, tocar otro pide confirmar con la ventana.
+      'soy-yo': el => {
+        if (!Billetes.soy()) { Billetes.ponerSoy(el.dataset.nombre); App.refresh(); }
+        else if (el.dataset.nombre !== Billetes.soy()) Billetes.elegirSoy();
+      },
+      'cambiar-yo': () => Billetes.elegirSoy(),
+    });
     root.innerHTML = html`
       <h1 class="h">${V.titulo}</h1>
       <p class="sub-h">${U.fmtShort(V.inicio)} – ${U.fmtShort(V.fin)} · ${Datos.dias.length} días</p>
       ${estado()}
       <div class="leyenda">${Object.keys(V.zonas).map(Piezas.zona)}</div>
+      ${grupo()}
       ${meses().map(mes)}
       <h2 class="h2">Día a día</h2>
       ${V.bloques.map(bloque)}
       <a class="link-info" href="#/info">${U.ICON.info}<span>Notas del plan, guías y consejos</span></a>`;
+  }
+
+  // Franja con los avatares del grupo, justo encima del calendario. El tuyo sale marcado; si en este móvil aún no has
+  // dicho quién eres, te lo pide (y basta con tocar tu avatar). «Cambiar» por si te has equivocado.
+  let preguntado = false; // la ventana se abre sola una vez por sesión
+  function grupo() {
+    const nombres = V.grupo || [];
+    if (!nombres.length) return '';
+    const yo = Billetes.soy();
+    if (!yo && !preguntado) {
+      preguntado = true;
+      setTimeout(() => { if (App.pantalla() === Calendario && !Billetes.soy()) Billetes.elegirSoy(); }, 500);
+    }
+    return html`<section class="grupo ${yo ? '' : 'sin-yo'}">
+      <div class="grupo-cab">
+        ${yo ? html`<p>Eres <b>${yo}</b></p><button type="button" class="btn-ruta" data-act="cambiar-yo">Cambiar</button>`
+          : html`<p class="grupo-pide">👋 <b>¿Quién eres?</b> Toca tu avatar</p>`}
+      </div>
+      <div class="grupo-caras">${nombres.map(n => html`<button type="button" class="cara ${n === yo ? 'yo-cara' : ''}"
+          data-act="soy-yo" data-nombre="${n}" aria-pressed="${n === yo}" aria-label="${n}">
+          ${Piezas.avatar(n)}<span>${n === yo ? 'Tú' : n}</span></button>`)}</div>
+    </section>`;
   }
 
   // «Faltan 4 días», «Día 3 de 21» o «Viaje terminado».
