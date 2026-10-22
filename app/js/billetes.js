@@ -148,7 +148,8 @@ const Billetes = (() => {
         ${t.tambien ? html`<small>también ${t.tambien}</small>` : ''}
       </div>
       <div class="tr-ruta">${punto(t.de, 'de')}<div class="tr-linea" aria-hidden="true"><span>✈</span></div>${punto(t.a, 'a')}</div>
-      ${t.avion || t.clase ? html`<p class="tr-extra">${[t.avion, t.clase].filter(Boolean).join(' · ')}</p>` : ''}
+      ${t.avion || t.clase || t.duracion ? html`<p class="tr-extra">${[t.duracion && '⏱ ' + t.duracion, t.avion, t.clase]
+        .filter(Boolean).join(' · ')}</p>` : ''}
       ${t.aviso ? html`<p class="tr-aviso">⚠️ ${U.rich(t.aviso)}</p>` : ''}
       ${asientos.length ? html`<div class="tr-asientos">${asientos.map(([nombre, asiento]) => html`
         <span class="tr-asiento">${Piezas.avatar(nombre, 'mini')}<span>${nombre}</span><b>${asiento}</b></span>`)}</div>` : ''}
