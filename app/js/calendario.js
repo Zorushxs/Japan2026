@@ -11,7 +11,6 @@ const Calendario = (() => {
         if (!Billetes.soy()) { Billetes.ponerSoy(el.dataset.nombre); App.refresh(); }
         else if (el.dataset.nombre !== Billetes.soy()) Billetes.elegirSoy();
       },
-      'cambiar-yo': () => Billetes.elegirSoy(),
     });
     root.innerHTML = html`
       <h1 class="h">${V.titulo}</h1>
@@ -26,19 +25,20 @@ const Calendario = (() => {
   }
 
   // Franja con los avatares del grupo, justo encima del calendario. El tuyo sale marcado; si en este móvil aún no has
-  // dicho quién eres, te lo pide (y basta con tocar tu avatar). «Cambiar» por si te has equivocado.
+  // dicho quién eres, te lo pide (y basta con tocar tu avatar). Para cambiar, se toca otro avatar.
   let preguntado = false; // la ventana se abre sola una vez por sesión
   function grupo() {
-    const nombres = V.grupo || [];
-    if (!nombres.length) return '';
     const yo = Billetes.soy();
+    // Tú, el primero; los demás en su orden.
+    const nombres = (V.grupo || []).slice().sort((x, y) => (y === yo) - (x === yo));
+    if (!nombres.length) return '';
     if (!yo && !preguntado) {
       preguntado = true;
       setTimeout(() => { if (App.pantalla() === Calendario && !Billetes.soy()) Billetes.elegirSoy(); }, 500);
     }
     return html`<section class="grupo ${yo ? '' : 'sin-yo'}">
       <div class="grupo-cab">
-        ${yo ? html`<p>Eres <b>${yo}</b></p><button type="button" class="btn-ruta" data-act="cambiar-yo">Cambiar</button>`
+        ${yo ? html`<p>Eres <b>${yo}</b></p>`
           : html`<p class="grupo-pide">👋 <b>¿Quién eres?</b> Toca tu avatar</p>`}
       </div>
       <div class="grupo-caras">${nombres.map(n => html`<button type="button" class="cara ${n === yo ? 'yo-cara' : ''}"
