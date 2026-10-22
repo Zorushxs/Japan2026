@@ -53,7 +53,7 @@ const Piezas = (() => {
   }
 
   // Capturas de un paso (`imagenes: [{ ruta, pie? }]`, en privado/guias/), plegadas para no alargar el plan.
-  const capturas = lista => html`<details class="capturas"><summary>Capturas (${lista.length})</summary>
+  const capturas = lista => html`<details class="capturas"><summary>Ver capturas (${lista.length})</summary>
     ${lista.map(c => html`<figure class="guia-img"><img src="${Datos.archivo(c.ruta)}" alt="${c.pie || ''}" loading="lazy">
       ${c.pie ? html`<figcaption>${c.pie}</figcaption>` : ''}</figure>`)}</details>`;
 

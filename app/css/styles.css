@@ -286,7 +286,15 @@ iframe.mapa-google {
 .guia-img figcaption { font-size: 13px; color: var(--mute); margin-top: 4px; }
 /* Capturas de un paso del plan: plegadas; las de móvil, estrechas y centradas. */
 .capturas { margin: 8px 0; }
-.capturas summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--accent); }
+.capturas summary {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink); font-size: 15px; font-weight: 700; list-style: none;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.capturas summary::-webkit-details-marker { display: none; }
+.capturas summary::before { content: '📷'; }
+.capturas summary::after { content: '▾'; transition: transform .2s; }
+.capturas[open] summary::after { transform: rotate(180deg); }
 .capturas .guia-img { max-width: 340px; margin: 12px auto; }
 .billete-pdf {
   display: flex; flex-direction: column; gap: 4px; margin: 14px 0; padding: 14px; border-radius: var(--r);
