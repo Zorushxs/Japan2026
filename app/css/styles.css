@@ -343,7 +343,10 @@ iframe.mapa-google {
 .qv-no .qv-av { opacity: .3; filter: grayscale(1); }
 .qv-no .qv-marca { display: none; }
 .qv-no .qv-nom { color: var(--mute); font-weight: 500; }
-.qv-yo .qv-nom { text-decoration: underline 2px var(--accent); text-underline-offset: 2px; }
+.qv-total { border-top: 3px solid var(--tiempo); }
+.qv-total .qv-p { cursor: default; gap: 2px; }
+.qv-num { font: 800 17px/1 var(--sans); color: var(--tiempo); }
+.qv-q { font-size: 10px; font-weight: 700; color: var(--opcional); }
 .qv + .sincro { margin-top: 6px; font-size: 12.5px; }
 @media (min-width: 400px) { .qv-p { font-size: 10.5px; } }
 @media (min-width: 560px) { .qv-av { width: 40px; height: 40px; } .qv-p { font-size: 12px; } }

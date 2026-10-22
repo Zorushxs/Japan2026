@@ -82,7 +82,6 @@ const Excursiones = (() => {
   }
 
   function quienVa(filas, conTitulo) {
-    const yo = Billetes.soy();
     return html`<div class="qv">${filas.map(fila => {
       const e = Datos.excursion(fila.id);
       const estados = (V.grupo || []).map(nombre => ({ nombre, est: estado(fila, nombre) }));
@@ -93,14 +92,28 @@ const Excursiones = (() => {
         <p class="qv-cab">${conTitulo
           ? (e ? html`<a href="#/excursion/${e.id}">${titulo}</a>` : html`<b>${titulo}</b>`)
           : html`<b>¿Quién va?</b>`}<small>${cuenta}</small></p>
-        <div class="qv-caras">${estados.map(p => html`<button class="qv-p qv-${p.est} ${p.nombre === yo ? 'qv-yo' : ''}"
+        <div class="qv-caras">${estados.map(p => html`<button class="qv-p qv-${p.est}"
           data-act="va" data-exc="${fila.id}" data-nombre="${p.nombre}" ${puede(p.nombre) ? '' : 'disabled'} aria-label="${p.nombre}: ${TEXTO[p.est]}"
           title="${p.nombre}: ${TEXTO[p.est]}">
           <span class="qv-av">${Piezas.avatar(p.nombre)}<i class="qv-marca" aria-hidden="true"></i></span>
           <span class="qv-nom">${p.nombre}</span></button>`)}</div>
       </div>`;
-    })}</div>
+    })}${conTitulo ? porPersona(filas) : ''}</div>
     <p class="hint sincro">${Sincro.texto()}</p>`;
+  }
+
+  // Recuento al final de la tabla: a cuántas va cada uno (y a cuántas quizá).
+  function porPersona(filas) {
+    return html`<div class="qv-fila qv-total">
+      <p class="qv-cab"><b>A cuántas va cada uno</b></p>
+      <div class="qv-caras">${(V.grupo || []).map(nombre => {
+        const n = est => filas.filter(f => estado(f, nombre) === est).length;
+        return html`<div class="qv-p" title="${nombre}: va a ${n('si')}${n('quizas') ? `, quizá a ${n('quizas')}` : ''}">
+          <span class="qv-av">${Piezas.avatar(nombre)}</span>
+          <span class="qv-nom">${nombre}</span>
+          <b class="qv-num">${n('si')}</b>${n('quizas') ? html`<small class="qv-q">+${n('quizas')}?</small>` : ''}</div>`;
+      })}</div>
+    </div>`;
   }
 
   // Al llegar cambios (propios o de otro móvil), solo se repinta la tabla: el resto de la pantalla no se mueve.
