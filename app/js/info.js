@@ -4,12 +4,21 @@ const Info = (() => {
 
   function render(root) {
     const info = Datos.V.info;
+    // Las guías de los alojamientos, por orden de estancia; luego el resto, en el orden de los datos.
+    const alojamientos = Datos.estancias().map(e => ({ e, g: Datos.guia(Datos.alojamiento(e.clave).guia) }))
+      .filter(({ g }, i, todas) => g && todas.findIndex(x => x.g === g) === i);
+    const otras = (Datos.V.guias || []).filter(g => !alojamientos.some(a => a.g === g));
     root.innerHTML = html`
       <a class="volver" href="#/">${U.ICON.left}<span>Calendario</span></a>
       <h1 class="h">Notas del plan</h1>
 
-      ${(Datos.V.guias || []).length ? html`<h2 class="h2">Guías</h2>
-        <div class="billetes">${Datos.V.guias.map(Piezas.guia)}</div>` : ''}
+      ${alojamientos.length ? html`<h2 class="h2">Guías de los alojamientos</h2>
+        <p class="hint">En el orden en que los ocupamos.</p>
+        <div class="billetes">${alojamientos.map(({ e, g }) => html`<div class="guia-aloj">
+          <small>${U.fmtShort(e.desde)} → ${U.fmtShort(e.hasta)} · ${Datos.alojamiento(e.clave).nombre}</small>
+          ${Piezas.guia(g)}</div>`)}</div>` : ''}
+      ${otras.length ? html`<h2 class="h2">Otras guías</h2>
+        <div class="billetes">${otras.map(g => Piezas.guia(g))}</div>` : ''}
       <h2 class="h2">El plan</h2>
       ${info.intro.map(p => html`<p>${rich(p)}</p>`)}
       <h2 class="h2">Descartado</h2>
