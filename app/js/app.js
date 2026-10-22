@@ -86,9 +86,14 @@ const App = (() => {
     $('#lockBtn').hidden = !window.CERRADURA;
     $('#lockBtn').onclick = lock;
     route();
+    // Lo compartido de los billetes: al arrancar y, con la pantalla de billetes abierta, cada 20 s.
+    Sincro.traer();
+    setInterval(() => {
+      if (current === Billetes && document.visibilityState === 'visible') Sincro.traer();
+    }, 20000);
   }
 
-  return { start, replace, pantalla: () => current };
+  return { start, replace, refresh: route, pantalla: () => current };
 })();
 
 App.start();

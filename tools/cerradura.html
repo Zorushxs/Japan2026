@@ -86,7 +86,7 @@
     const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
     return crypto.subtle.deriveKey(
       { name: 'PBKDF2', salt: bytes(datos.sal), iterations: datos.iter, hash: 'SHA-256' },
-      base, { name: 'AES-GCM', length: 256 }, exportable, ['decrypt']);
+      base, { name: 'AES-GCM', length: 256 }, exportable, ['encrypt', 'decrypt']);
   }
 
   async function descifrar(clave) {
@@ -101,7 +101,8 @@
     ? Promise.resolve()
     : new Promise(resolve => addEventListener('load', resolve, { once: true })));
 
-  async function mostrar(html) {
+  // La clave se deja en window.CLAVE_VIAJE: la app la usa para cifrar lo que comparte (js/sincro.js).
+  async function mostrar(html, clave) {
     // La app solo se puede escribir una vez por ventana (su código declara constantes globales). Si ya se escribió,
     // se recarga de cero; con «Recordar» se abrirá sola.
     await cargada();
@@ -110,6 +111,7 @@
       return;
     }
     window.CERRADURA = true;
+    window.CLAVE_VIAJE = clave;
     document.open();
     document.write(html);
     document.close();
@@ -120,9 +122,9 @@
     try { guardada = localStorage.getItem(CLAVE); } catch {}
     if (!guardada) return false;
     try {
-      const clave = await crypto.subtle.importKey('raw', bytes(guardada), 'AES-GCM', false, ['decrypt']);
+      const clave = await crypto.subtle.importKey('raw', bytes(guardada), 'AES-GCM', false, ['encrypt', 'decrypt']);
       const html = await descifrar(clave);
-      await mostrar(html);
+      await mostrar(html, clave);
       return true;
     } catch {
       // La contraseña ha cambiado: se vuelve a pedir.
@@ -156,9 +158,9 @@
     estado('Comprobando…');
     // Deja que se pinte «Comprobando…» antes del cálculo.
     await new Promise(resolve => setTimeout(resolve, 30));
-    let html;
+    let html, clave;
     try {
-      const clave = await derivar(pass, recordar);
+      clave = await derivar(pass, recordar);
       html = await descifrar(clave);
       if (recordar) {
         try { localStorage.setItem(CLAVE, base64(await crypto.subtle.exportKey('raw', clave))); } catch {}
@@ -171,7 +173,7 @@
     estado('Abriendo…');
     await new Promise(resolve => setTimeout(resolve, 30));
     try {
-      await mostrar(html);
+      await mostrar(html, clave);
     } catch (error) {
       fallo('No se ha podido abrir: ' + error);
     }

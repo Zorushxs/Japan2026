@@ -367,3 +367,34 @@ iframe.mapa-google {
 @media (max-width: 370px) {
   .nav a { font-size: 9.5px; letter-spacing: -.02em; }
 }
+
+/* ---------- Reparto de billetes ---------- */
+.reparto { margin: 14px 0 6px; padding: 12px 14px; border-radius: var(--r); background: var(--panel); border: 1px solid var(--line); }
+.reparto p { margin: 0; }
+.reparto .row { margin-top: 8px; }
+.reparto .btn-ruta { margin-left: 0; }
+.reparto .sincro { margin-top: 8px; font-size: 12.5px; }
+.billete-caja { margin: 18px 0; }
+.billete-caja .billete-img { margin-top: 8px; }
+.billete-nombre { margin: 0 0 6px; font-weight: 700; }
+.billete-ctrl { display: flex; flex-wrap: wrap; gap: 8px; }
+.billete-ctrl .btn-ruta { margin-left: 0; }
+.billete-ctrl .con-nombre { border-color: var(--accent); color: var(--accent); }
+.billete-ctrl .usado[aria-pressed="true"] { background: var(--tiempo); border-color: var(--tiempo); color: #fff; }
+.billete-caja.mio { padding: 10px; border: 2px solid var(--accent); border-radius: var(--r); }
+.tu-billete { margin: 0 0 4px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); }
+.billete-caja.gastado .billete-img { opacity: .55; }
+/* Ventana para pedir un nombre. */
+dialog.ask {
+  width: min(420px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--line); border-radius: 16px;
+  background: var(--panel); color: var(--ink);
+}
+dialog.ask::backdrop { background: rgb(0 0 0 / .45); }
+dialog.ask form { padding: 18px; display: grid; gap: 12px; }
+dialog.ask h2 { margin: 0; font: 700 18px/1.3 var(--serif); }
+dialog.ask input {
+  width: 100%; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg);
+  color: var(--ink); font: inherit;
+}
+dialog.ask .chips { margin: 0; }
+.ask-btns { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }

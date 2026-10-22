@@ -59,6 +59,19 @@ concretas, sitios, alojamientos, nombres).
   `billetes/x.pdf`; también `{ ruta, nombre }`, uno por persona). Sin archivo, sale como pendiente. Para QR mejor una
   imagen (PNG/JPG) que un PDF: se ve dentro de la app, sobre blanco.
 
+## Billetes compartidos (nombres y «usado»)
+
+- [app/js/sincro.js](app/js/sincro.js): de quién es cada entrada y si se ha usado, igual en todos los móviles. Se guarda
+  en localStorage (`viaje:estado`, funciona sin conexión) y se sincroniza con Firebase Realtime Database por REST
+  (`GET`/`PATCH` de `<url>/viaje/<sala>/items.json`), configurado en `VIAJE.sincro = { url, sala }`. Sin `url`, cada
+  móvil guarda lo suyo.
+- Cada entrada va **cifrada con la clave de la app** (AES-GCM, IV aleatorio) y su nombre en la base de datos es un hash
+  de `sala|billete|archivo`: allí no hay nada legible. La cerradura deja la clave en `window.CLAVE_VIAJE` (por eso la
+  deriva con `encrypt` y `decrypt`). Gana el cambio más reciente de cada entrada.
+- «Soy: …» (`viaje:soy`) es solo de cada móvil: pone tu billete el primero y marcado.
+- Reglas de Firebase: lectura y escritura solo en `viaje/$sala` (la raíz cerrada) y validación de `{ c, t }`.
+- Prueba: `node tests/sincro.test.js` (dos «móviles» contra una base de datos falsa).
+
 ## Flujo
 
 1. Editar `privado/viaje.js` (y dejar billetes en `privado/billetes/`).
