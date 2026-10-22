@@ -252,5 +252,5 @@ const Piezas = (() => {
   // Chip con el color de la zona.
   const zona = id => html`<span class="zona" style="--z:${Datos.zona(id).color}">${Datos.zona(id).nombre}</span>`;
 
-  return { billetesDe, plan, cabeceraPlan, cambiarModo, mapa, billete, excursion, zona, chipBillete, chipLugar, alojamiento, guia, avatar };
+  return { capturas, billetesDe, plan, cabeceraPlan, cambiarModo, mapa, billete, excursion, zona, chipBillete, chipLugar, alojamiento, guia, avatar };
 })();

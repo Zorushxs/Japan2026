@@ -39,6 +39,7 @@ const Guia = (() => {
       return html`<table class="guia-tabla"><thead><tr>${cabecera.map(c => html`<th>${c}</th>`)}</tr></thead>
         <tbody>${filas.map(f => html`<tr>${f.map(c => html`<td>${c}</td>`)}</tr>`)}</tbody></table>`;
     }
+    if (b.capturas) return Piezas.capturas(b.capturas);
     if (b.imagen) return html`<figure class="guia-img"><img src="${Datos.archivo(b.imagen)}" alt="${b.pie || ''}"
       loading="lazy">${b.pie ? html`<figcaption>${b.pie}</figcaption>` : ''}</figure>`;
     if (b.lugares) return html`<div class="chips">${b.lugares.map(id => Piezas.chipLugar(id, {}))}</div>`;

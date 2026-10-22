@@ -59,6 +59,9 @@ function comprobar() {
     if (b.imagen && !fs.existsSync(path.join(PRIVADO, b.imagen))) {
       errores.push(`Guía ${g.id}: no está la imagen privado/${b.imagen}`);
     }
+    (b.capturas || []).forEach(c => {
+      if (!fs.existsSync(path.join(PRIVADO, c.ruta))) errores.push(`Guía ${g.id}: no está la imagen privado/${c.ruta}`);
+    });
   }));
 
   V.excursiones.forEach(e => {

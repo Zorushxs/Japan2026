@@ -60,7 +60,7 @@ concretas, sitios, alojamientos, nombres).
   plegado con sus avatares para los demás. `excepto: [nombres]` al revés: plegado («Sin X ni Y») solo para esos y
   normal para el resto. La prueba de la cerradura recorre todos los días con una persona elegida.
 - **Paso**: además, `enlaces?: [{ texto, url }]` (chips de enlace web) e `imagenes?: [{ ruta, pie? }]` (capturas en
-  `privado/guias/`, plegadas en «Capturas (n)»; solo en detalle). Los textos admiten `[texto](https://…)`.
+  `privado/guias/`, plegadas en «Ver capturas (n)»; solo en detalle; en las guías, el bloque `{ capturas: […] }`). Los textos admiten `[texto](https://…)`.
 - **Lugar**: `nombre`, `info?` (qué es, sale en detalle), `url?` (enlace propio de Google Maps), `q` (búsqueda de Google Maps), `lat`/`lon` opcionales (sin
   ellas no sale en la captura).
 - **Alojamiento** (`alojamientos.<CLAVE>`): `nombre`, `direccion`, `q?` (búsqueda de Google Maps, p. ej. coordenadas
