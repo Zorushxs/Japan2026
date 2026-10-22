@@ -6,6 +6,9 @@ const Dia = (() => {
 
   function render(root, fecha) {
     const d = Datos.dia(fecha) || Datos.dias[0];
+    // Si venimos de otro día, el nuevo entra deslizándose desde el lado que toca.
+    const venia = /^#\/dia\//.test(App.anterior() || '');
+    const desde = venia && actual && actual.fecha !== d.fecha ? (d.fecha > actual.fecha ? 'der' : 'izq') : '';
     actual = d;
     const i = Datos.indice(d.fecha);
     const anterior = Datos.dias[i - 1], siguiente = Datos.dias[i + 1];
@@ -14,7 +17,7 @@ const Dia = (() => {
     const billetes = Datos.billetesDia(d);
     const bloque = Datos.bloque(d.fecha);
     root.innerHTML = html`
-      <div class="dia" style="--z:${Datos.zona(d.zona).color}">
+      <div class="dia ${desde ? 'entra-' + desde : ''}" style="--z:${Datos.zona(d.zona).color}">
         <div class="dia-nav">
           ${flecha(anterior, 'left', 'Día anterior')}
           <div class="dia-cab">
@@ -88,17 +91,43 @@ const Dia = (() => {
     if (e.key === 'ArrowRight') mover(1);
   }
 
-  // Deslizar el dedo en horizontal (y no en vertical) cambia de día.
-  let inicio = null;
+  // Deslizar el dedo en horizontal: la tarjeta del día sigue al dedo; al soltar, si se ha deslizado bastante, sale por
+  // ese lado y entra el día siguiente (o el anterior) por el contrario; si no, vuelve a su sitio. En el primer y el
+  // último día se estira un poco y rebota.
+  let gesto = null;
+  const tarjeta = () => document.querySelector('#view .dia');
   document.addEventListener('touchstart', e => {
-    if (App.pantalla() !== Dia || e.touches.length !== 1 || e.target.closest('.mapa-img, .chips')) return;
-    inicio = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    if (App.pantalla() !== Dia || e.touches.length !== 1 || e.target.closest('.mapa-img, .chips, dialog')) return;
+    gesto = { x: e.touches[0].clientX, y: e.touches[0].clientY, dx: 0, eje: null, el: tarjeta() };
   }, { passive: true });
-  document.addEventListener('touchend', e => {
-    if (!inicio) return;
-    const dx = e.changedTouches[0].clientX - inicio.x, dy = e.changedTouches[0].clientY - inicio.y;
-    inicio = null;
-    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.8) mover(dx < 0 ? 1 : -1);
+  document.addEventListener('touchmove', e => {
+    if (!gesto || !gesto.el) return;
+    const dx = e.touches[0].clientX - gesto.x, dy = e.touches[0].clientY - gesto.y;
+    if (!gesto.eje && Math.hypot(dx, dy) > 10) gesto.eje = Math.abs(dx) > Math.abs(dy) * 1.3 ? 'h' : 'v';
+    if (gesto.eje !== 'h') return;
+    const hay = Datos.dias[Datos.indice(actual.fecha) + (dx < 0 ? 1 : -1)];
+    gesto.dx = hay ? dx : dx * 0.25; // sin día al otro lado, se resiste
+    gesto.el.style.transition = 'none';
+    gesto.el.style.transform = `translateX(${gesto.dx}px) rotate(${gesto.dx / 60}deg)`;
+    gesto.el.style.opacity = String(1 - Math.min(Math.abs(gesto.dx) / 700, 0.35));
+  }, { passive: true });
+  document.addEventListener('touchend', () => {
+    if (!gesto) return;
+    const { dx, eje, el } = gesto;
+    gesto = null;
+    if (eje !== 'h' || !el) return;
+    const paso = dx < 0 ? 1 : -1;
+    const hay = Datos.dias[Datos.indice(actual.fecha) + paso];
+    if (hay && Math.abs(dx) > 70) {
+      el.style.transition = 'transform .2s cubic-bezier(.4, 0, 1, 1), opacity .2s';
+      el.style.transform = `translateX(${dx < 0 ? -110 : 110}%) rotate(${dx < 0 ? -4 : 4}deg)`;
+      el.style.opacity = '0';
+      setTimeout(() => mover(paso), 170);
+    } else {
+      el.style.transition = 'transform .35s cubic-bezier(.2, 1.4, .4, 1), opacity .25s';
+      el.style.transform = '';
+      el.style.opacity = '';
+    }
   }, { passive: true });
 
   return { nav: 'dia', render, key };

@@ -140,7 +140,8 @@ const App = (() => {
     }, 20000);
   }
 
-  return { start, replace, refresh: route, pantalla: () => current };
+  // anterior(): el hash de la pantalla que se veía antes (durante render, aún no se ha cambiado).
+  return { start, replace, refresh: route, pantalla: () => current, anterior: () => lastHash };
 })();
 
 App.start();

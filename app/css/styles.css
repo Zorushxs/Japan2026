@@ -570,3 +570,15 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .muestras { display: flex; flex: none; }
 .muestras i { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--panel); margin-left: -6px; }
 .muestras i:first-child { margin-left: 0; }
+
+/* Cambio de día: la tarjeta sigue al dedo (js/dia.js) y el día nuevo entra deslizándose desde su lado. */
+.main { overflow-x: clip; }
+.dia { touch-action: pan-y; will-change: transform; }
+.dia.entra-der { animation: dia-entra-der .32s cubic-bezier(.2, .8, .2, 1); }
+.dia.entra-izq { animation: dia-entra-izq .32s cubic-bezier(.2, .8, .2, 1); }
+@keyframes dia-entra-der { from { transform: translateX(40%) rotate(2deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes dia-entra-izq { from { transform: translateX(-40%) rotate(-2deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .dia.entra-der, .dia.entra-izq { animation: dia-funde .2s ease-out; }
+  @keyframes dia-funde { from { opacity: 0; } }
+}
