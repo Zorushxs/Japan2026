@@ -465,3 +465,28 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .billete-ctrl .con-nombre { display: inline-flex; align-items: center; gap: 6px; padding-left: 4px; }
 .grande-quien { display: flex; align-items: center; gap: 8px; font-size: 20px !important; }
 .grande-quien .avatar.mini { width: 36px; height: 36px; font-size: 16px; }
+
+/* Marco dorado: anillo que gira, brillo que late y corona. */
+.marco { position: relative; display: inline-grid; place-items: center; flex: none; border-radius: 50%; padding: 3px; }
+.marco::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(#fff6c2, #f5c518, #b8860b, #ffe066, #fff6c2, #d4a017, #f5c518, #fff6c2);
+  animation: marco-gira 2.4s linear infinite;
+}
+.marco > .avatar { position: relative; z-index: 1; box-shadow: none; margin: 0; }
+.marco::after {
+  content: "👑"; position: absolute; z-index: 2; top: -.62em; left: 50%; font-size: 15px; line-height: 1;
+  transform: translateX(-50%) rotate(-14deg); filter: drop-shadow(0 1px 1px rgb(0 0 0 / .35));
+}
+.marco-dorado { animation: marco-brilla 1.8s ease-in-out infinite; }
+.marco.mini { padding: 2px; }
+.marco.mini::after { font-size: 10px; }
+.marco.grande { padding: 5px; margin: 10px auto 6px; display: grid; width: fit-content; }
+.marco.grande::after { font-size: 30px; }
+.yo .marco.grande > .avatar { box-shadow: none; }
+@keyframes marco-gira { to { transform: rotate(1turn); } }
+@keyframes marco-brilla {
+  0%, 100% { box-shadow: 0 0 6px 1px rgb(245 197 24 / .55); }
+  50% { box-shadow: 0 0 16px 4px rgb(245 197 24 / .9); }
+}
+@media (prefers-reduced-motion: reduce) { .marco::before, .marco-dorado { animation: none; } }

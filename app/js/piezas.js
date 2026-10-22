@@ -149,6 +149,11 @@ const Piezas = (() => {
   // un color distinto (por su orden en VIAJE.grupo); alguien de fuera, uno que sale de su nombre.
   const COLORES = ['#d64545', '#2f8f5b', '#3a6fd8', '#c27c0e', '#8a4fd0', '#0f8a8a', '#d0477f', '#5b6b2f', '#7a5230'];
   function avatar(nombre, clase) {
+    const marco = (Datos.V.marcos || {})[nombre];
+    const dentro = avatarSolo(nombre, clase);
+    return marco ? html`<span class="marco marco-${marco} ${clase || ''}">${dentro}</span>` : dentro;
+  }
+  function avatarSolo(nombre, clase) {
     const foto = (Datos.V.avatares || {})[nombre];
     if (foto) return html`<img class="avatar ${clase || ''}" src="${Datos.archivo(foto)}" alt="">`;
     const i = (Datos.V.grupo || []).indexOf(nombre);
