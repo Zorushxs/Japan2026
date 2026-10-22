@@ -753,3 +753,28 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .subida-txt b { font-size: 14px; overflow-wrap: anywhere; }
 .subida-txt small { color: var(--mute); font-size: 12px; }
 .subida .icon-btn { width: 34px; height: 34px; }
+
+/* Franja semanal arriba de cada día. */
+.semana { margin: -4px 0 14px; padding: 8px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel);
+  touch-action: pan-y; }
+.semana.entra-der { animation: sem-der .25s ease-out; }
+.semana.entra-izq { animation: sem-izq .25s ease-out; }
+@keyframes sem-der { from { opacity: .3; transform: translateX(24px); } }
+@keyframes sem-izq { from { opacity: .3; transform: translateX(-24px); } }
+.sem-cab { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; font-size: 13px;
+  font-weight: 700; color: var(--mute); }
+.sem-btn { display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 50%;
+  background: none; color: var(--ink); }
+.sem-btn:disabled { opacity: .25; cursor: default; }
+.sem-btn svg { width: 18px; height: 18px; }
+.sem-dias { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.sem-dia { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 0; border-radius: 10px;
+  color: var(--mute); text-decoration: none; line-height: 1.1; }
+.sem-dia small { font-size: 10.5px; font-weight: 700; }
+.sem-dia b { font-size: 16px; font-variant-numeric: tabular-nums; }
+.sem-dia.viaje { background: color-mix(in srgb, var(--z) 22%, var(--panel)); color: var(--ink); }
+.sem-dia.viaje small { color: color-mix(in srgb, var(--z) 70%, var(--ink)); }
+.sem-dia.actual { background: var(--z); color: #fff; box-shadow: 0 2px 8px color-mix(in srgb, var(--z) 45%, transparent); }
+.sem-dia.actual small { color: #fff; opacity: .9; }
+.sem-dia.hoy { outline: 2px solid var(--ink); outline-offset: 1px; }
+@media (prefers-reduced-motion: reduce) { .semana.entra-der, .semana.entra-izq { animation: none; } }

@@ -3,6 +3,59 @@
 const Dia = (() => {
   const { html, rich, ICON } = U;
   let actual = null;
+  let lunesVisto = null; // lunes de la semana que enseña la franja de arriba
+
+  // ---------- Franja semanal ----------
+  // Lunes a domingo, con el color de cada zona (como el calendario mensual) y el día que se ve marcado. Las flechas o
+  // deslizar el dedo sobre la franja cambian de semana sin salir del día.
+  const lunesDe = fecha => U.addDays(fecha, -((U.parse(fecha).getDay() + 6) % 7));
+  const LETRAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  function semana(d) {
+    const V = Datos.V;
+    const fechas = Array.from({ length: 7 }, (_, i) => U.addDays(lunesVisto, i));
+    const hayAntes = lunesVisto > lunesDe(V.inicio);
+    const hayDespues = U.addDays(lunesVisto, 7) <= V.fin;
+    const corta = f => `${U.parse(f).getDate()} ${U.monthName(U.parse(f).getMonth()).slice(0, 3)}`;
+    return html`<div class="semana">
+      <div class="sem-cab">
+        <button type="button" class="sem-btn" data-sem="-1" aria-label="Semana anterior" ${hayAntes ? '' : U.raw('disabled')}>${ICON.left}</button>
+        <span>${corta(fechas[0])} – ${corta(fechas[6])}</span>
+        <button type="button" class="sem-btn" data-sem="1" aria-label="Semana siguiente" ${hayDespues ? '' : U.raw('disabled')}>${ICON.right}</button>
+      </div>
+      <div class="sem-dias">${fechas.map((f, i) => {
+        const dia = Datos.dia(f);
+        const clases = [f === d.fecha ? 'actual' : '', f === U.today() ? 'hoy' : ''].join(' ');
+        const dentro = html`<small>${LETRAS[i]}</small><b>${U.parse(f).getDate()}</b>`;
+        return dia
+          ? html`<a class="sem-dia viaje ${clases}" href="#/dia/${f}" data-replace style="--z:${Datos.zona(dia.zona).color}"
+              aria-label="${U.fmtLong(f)}: ${dia.titulo}" ${f === d.fecha ? U.raw('aria-current="date"') : ''}>${dentro}</a>`
+          : html`<span class="sem-dia ${clases}">${dentro}</span>`;
+      })}</div>
+    </div>`;
+  }
+  function moverSemana(paso) {
+    const V = Datos.V;
+    const nuevo = U.addDays(lunesVisto, 7 * paso);
+    if (nuevo < lunesDe(V.inicio) || nuevo > V.fin) return;
+    lunesVisto = nuevo;
+    const el = document.querySelector('#view .semana');
+    if (!el) return;
+    el.outerHTML = String(semana(actual));
+    const nueva = document.querySelector('#view .semana');
+    nueva.classList.add(paso > 0 ? 'entra-der' : 'entra-izq');
+    conectarSemana(nueva);
+  }
+  function conectarSemana(el) {
+    el.querySelectorAll('[data-sem]').forEach(b => { b.onclick = () => moverSemana(Number(b.dataset.sem)); });
+    let x0 = null, y0 = null;
+    el.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    el.addEventListener('touchend', e => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) moverSemana(dx < 0 ? 1 : -1);
+    }, { passive: true });
+  }
 
   function render(root, fecha) {
     const d = Datos.dia(fecha) || Datos.dias[0];
@@ -10,6 +63,8 @@ const Dia = (() => {
     const venia = /^#\/dia\//.test(App.anterior() || '');
     const desde = venia && actual && actual.fecha !== d.fecha ? (d.fecha > actual.fecha ? 'der' : 'izq') : '';
     actual = d;
+    // La franja enseña la semana del día (salvo que ya la estuviera enseñando).
+    if (!lunesVisto || lunesDe(d.fecha) !== lunesVisto) lunesVisto = lunesDe(d.fecha);
     const i = Datos.indice(d.fecha);
     const anterior = Datos.dias[i - 1], siguiente = Datos.dias[i + 1];
     const mapas = Datos.mapasDia(d);
@@ -17,6 +72,7 @@ const Dia = (() => {
     const billetes = Datos.billetesDia(d);
     const bloque = Datos.bloque(d.fecha);
     root.innerHTML = html`
+      ${semana(d)}
       <div class="dia ${desde ? 'entra-' + desde : ''}" style="--z:${Datos.zona(d.zona).color}">
         <div class="dia-nav">
           ${flecha(anterior, 'left', 'Día anterior')}
@@ -40,6 +96,7 @@ const Dia = (() => {
         ${Subidas.seccion(d.subidas)}
       </div>`;
     Subidas.montar(root);
+    conectarSemana(root.querySelector('.semana'));
   }
 
   const flecha = (dia, icono, label) => (dia
@@ -99,7 +156,7 @@ const Dia = (() => {
   let gesto = null;
   const tarjeta = () => document.querySelector('#view .dia');
   document.addEventListener('touchstart', e => {
-    if (App.pantalla() !== Dia || e.touches.length !== 1 || e.target.closest('.mapa-img, .chips, dialog')) return;
+    if (App.pantalla() !== Dia || e.touches.length !== 1 || e.target.closest('.mapa-img, .chips, dialog, .semana')) return;
     gesto = { x: e.touches[0].clientX, y: e.touches[0].clientY, dx: 0, eje: null, el: tarjeta() };
   }, { passive: true });
   document.addEventListener('touchmove', e => {
