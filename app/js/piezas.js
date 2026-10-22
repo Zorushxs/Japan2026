@@ -204,6 +204,12 @@ const Piezas = (() => {
     </svg>
     <span class="nube n1" aria-hidden="true"></span><span class="nube n2" aria-hidden="true"></span>
     <span class="nube n3" aria-hidden="true"></span>`);
+  // Marco «zoro»: el dorado y, encima, tres tajos de katana que se dibujan uno tras otro formando una Z.
+  const ZORO = U.raw(`<svg class="tajos" viewBox="0 0 100 100" aria-hidden="true">
+      <path class="t1" pathLength="1" d="M22 27 L80 23"/>
+      <path class="t2" pathLength="1" d="M80 25 L20 76"/>
+      <path class="t3" pathLength="1" d="M20 77 L80 73"/>
+    </svg>`);
   const COLORES = ['#d64545', '#2f8f5b', '#3a6fd8', '#c27c0e', '#8a4fd0', '#0f8a8a', '#d0477f', '#5b6b2f', '#7a5230'];
   function avatar(nombre, clase) {
     const marco = (Datos.V.marcos || {})[nombre];
@@ -211,8 +217,9 @@ const Piezas = (() => {
     // El marco oscuro lleva además un sello japonés (hanko) con 鴉, «cuervo»; el dorado, el destello que recorre el
     // anillo, una corona de oro y tres chispas.
     const extra = marco === 'oscuro' ? html`<span class="sello" lang="ja" aria-hidden="true">鴉</span>`
-      : marco === 'dorado' ? DORADO : marco === 'nika' ? NIKA : '';
-    return marco ? html`<span class="marco marco-${marco} ${clase || ''}">${dentro}${extra}</span>` : dentro;
+      : marco === 'dorado' ? DORADO : marco === 'nika' ? NIKA : marco === 'zoro' ? html`${DORADO}${ZORO}` : '';
+    const clases = marco === 'zoro' ? 'marco-dorado marco-zoro' : 'marco-' + marco;
+    return marco ? html`<span class="marco ${clases} ${clase || ''}">${dentro}${extra}</span>` : dentro;
   }
   function avatarSolo(nombre, clase) {
     const foto = (Datos.V.avatares || {})[nombre];
