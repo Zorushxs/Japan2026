@@ -64,8 +64,9 @@ concretas, sitios, alojamientos, nombres).
   recortar nada** (el usuario lo pidió así): página a escala 2 con pypdfium2, PNG; el PDF original en `privado/originales/`.
   Para repartir entre parte del grupo: `para: [nombres]`; y otros textos: `cosa: 'pase'`, `marca: ['Sin canjear',
   'Canjeado', 'canjeados']` (por defecto «asiento» y «Usado»). `reparto: false` para no repartir (p. ej. los coches).
-  `para` también decide qué ve cada uno: en Billetes y en cada día salen primero los billetes de quien eres
-  (`Datos.esPara`); los que son solo de otros van en «Billetes del resto del grupo» (`Piezas.billetesDe`).
+  `para` también decide qué ve cada uno: en Billetes y en cada día la lista sigue el orden de fechas, y los billetes
+  que son solo de otros salen en su sitio pero atenuados y compactos («De otros:»; `Datos.esPara`, `Piezas.billetesDe`).
+  Cada billete puede llevar `drive` (su carpeta de Google Drive).
   Vuelos: `tramos: [{ vuelo, tambien?, aerolinea, avion?, clase?, de/a: { iata, ciudad, fecha, hora?, terminal? },
   aviso?, asientos?: { nombre: '34G' }, escala? }]`, `reserva: { localizador, trip? }`, `pasajeros: { nombre: nºbillete }`.
 

@@ -93,16 +93,16 @@ const Piezas = (() => {
   }
 
   // Tarjeta de un billete, con su estado.
-  function billete(b) {
+  function billete(b, ajeno) {
     const archivos = Datos.archivosBillete(b);
     const tiene = archivos.length > 0;
     const estados = archivos.map(a => Sincro.item(Sincro.clave(b, a)));
     const reparto = Datos.reparte(b)
       ? ` · ${estados.filter(e => e.nombre).length}/${archivos.length} con nombre · ${estados.filter(e => e.usado).length} ${Billetes.textos(b).usados}`
       : '';
-    return html`<a class="billete ${tiene ? '' : 'falta'}" href="#/billetes/${b.id}">
+    return html`<a class="billete ${tiene ? '' : 'falta'} ${ajeno ? 'ajeno' : ''}" href="#/billetes/${b.id}">
       <span class="billete-ico">${ICON.ticket}</span>
-      <span class="billete-txt"><b>${b.titulo}</b>
+      <span class="billete-txt">${ajeno ? html`<small class="de-otros">De otros:</small>` : ''}<b>${b.titulo}</b>
         <small>${U.fmtShort(b.fecha)}${b.hora ? ' · ' + b.hora : ''}${reparto}</small>
         ${Datos.reparte(b) && Billetes.miAsiento(b) ? html`<em class="mi-asiento">Tu ${Billetes.textos(b).cosa}: ${Billetes.miAsiento(b)}</em>` : ''}</span>
       ${b.para ? html`<span class="billete-quien">${b.para.map(n => avatar(n, 'mini'))}</span>` : ''}
@@ -110,16 +110,10 @@ const Piezas = (() => {
     </a>`;
   }
 
-  // Lista de billetes: primero los tuyos; los que son solo de otros, en un desplegable (se puede abrir para revisarlos).
+  // Lista de billetes por orden: los que son solo de otros se quedan en su sitio, pero atenuados y más pequeños.
   function billetesDe(lista) {
     const yo = Billetes.soy();
-    const mios = lista.filter(b => Datos.esPara(b, yo));
-    const otros = lista.filter(b => !Datos.esPara(b, yo));
-    return html`${mios.length ? html`<div class="billetes">${mios.map(billete)}</div>` : ''}
-      ${otros.length ? html`<details class="otros otros-billetes">
-        <summary>Billetes del resto del grupo (${otros.length})</summary>
-        <div class="billetes">${otros.map(billete)}</div>
-      </details>` : ''}`;
+    return html`<div class="billetes">${lista.map(b => billete(b, !Datos.esPara(b, yo)))}</div>`;
   }
 
   // Tarjeta de una excursión (con la miniatura de su primer mapa, si la hay).
