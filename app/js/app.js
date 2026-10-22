@@ -102,6 +102,7 @@ const App = (() => {
           <span>${p.nombre}</span>
         </button>`)}</div>
       <p class="hint">Solo en este móvil. Claro u oscuro, con el botón de al lado.</p>
+      <button type="button" class="btn jojo-probar" data-jojo>ゴゴ Probar el aviso de JoJo</button>
       <div class="ask-btns"><button value="no" class="btn">Cerrar</button></div>
     </form>`;
     dialog.querySelectorAll('[data-paleta]').forEach(el => {
@@ -112,6 +113,12 @@ const App = (() => {
         colorBarra();
       };
     });
+    // Botón de prueba del easter egg (provisional).
+    // Al cerrarse, la ventana hace history.back(): se abre después de ese «atrás» para que no cierre también el aviso.
+    dialog.querySelector('[data-jojo]').onclick = () => {
+      addEventListener('popstate', () => Jojo.avisar(true), { once: true });
+      dialog.close();
+    };
     U.modal(dialog);
   }
   // Color de la barra del navegador en el móvil: el fondo de la paleta.
