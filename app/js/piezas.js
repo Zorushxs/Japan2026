@@ -66,14 +66,25 @@ const Piezas = (() => {
         ${enlaces.map(e => html`<a class="lugar enlace" href="${e.url}" target="_blank" rel="noopener">${ICON.out}<span>${e.texto}</span></a>`)}</div>`
       : '';
     if (p.tipo === 'tiempo') return html`<li class="paso tiempo"><p>${rich(texto)}</p></li>`;
-    return html`<li class="paso ${p.tipo ? 'nota nota-' + p.tipo : ''}">
-      ${p.hora ? html`<span class="hora">${p.hora}</span>` : ''}
-      <div class="cuerpo">
-        ${p.tipo ? html`<span class="etiqueta">${ETIQUETAS[p.tipo] || p.tipo}</span>` : ''}
+    const contenido = html`
         <p>${rich(texto)}</p>
         ${p.sub && !resumen ? html`<ul class="sub">${p.sub.map(s => html`<li>${rich(s)}</li>`)}</ul>` : ''}
         ${extra}
-        ${resumen ? '' : infoLugares(lugares)}
+        ${resumen ? '' : infoLugares(lugares)}`;
+    // Un paso solo de algunos (`para`): plegado para los demás, abierto para ellos (o si no has dicho quién eres).
+    const yo = Billetes.soy();
+    const cuerpo = p.para
+      ? html`<details class="paso-de" ${!yo || p.para.includes(yo) ? U.raw('open') : ''}>
+          <summary><span class="paso-de-quien">${p.para.map(n => avatar(n, 'mini'))}</span>
+            <span>${rich(p.corto || p.texto)}</span></summary>
+          ${contenido}
+        </details>`
+      : contenido;
+    return html`<li class="paso ${p.tipo ? 'nota nota-' + p.tipo : ''}">
+      ${p.hora ? html`<span class="hora">${p.hora}</span>` : ''}
+      <div class="cuerpo">
+        ${p.tipo && !p.para ? html`<span class="etiqueta">${ETIQUETAS[p.tipo] || p.tipo}</span>` : ''}
+        ${cuerpo}
       </div>
     </li>`;
   }
