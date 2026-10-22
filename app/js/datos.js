@@ -109,7 +109,7 @@ const Datos = (() => {
   // Billetes de un día: los que el plan nombra y los que tienen esa fecha.
   function billetesDia(d) {
     const ids = [];
-    d.plan.forEach(paso => { if (paso.billete && !ids.includes(paso.billete)) ids.push(paso.billete); });
+    d.plan.forEach(paso => [].concat(paso.billete || []).forEach(id => { if (!ids.includes(id)) ids.push(id); }));
     V.billetes.forEach(b => { if (b.fecha === d.fecha && !ids.includes(b.id)) ids.push(b.id); });
     return ids.map(billete).filter(Boolean);
   }

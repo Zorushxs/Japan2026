@@ -9,7 +9,9 @@ function comprobar() {
   const errores = [];
   const pasos = (donde, plan) => plan.forEach((p, i) => {
     (p.lugares || []).forEach(id => { if (!Datos.existeLugar(id)) errores.push(`${donde}, paso ${i + 1}: no existe el lugar «${id}»`); });
-    if (p.billete && !Datos.billete(p.billete)) errores.push(`${donde}, paso ${i + 1}: no existe el billete «${p.billete}»`);
+    [].concat(p.billete || []).forEach(id => {
+      if (!Datos.billete(id)) errores.push(`${donde}, paso ${i + 1}: no existe el billete «${id}»`);
+    });
     if (!p.texto) errores.push(`${donde}, paso ${i + 1}: sin texto`);
   });
   const mapas = (donde, entidad) => (entidad.mapas || []).forEach(m => m.lugares.forEach(id => {

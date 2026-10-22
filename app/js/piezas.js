@@ -18,6 +18,8 @@ const Piezas = (() => {
   const chipBillete = id => {
     const b = Datos.billete(id);
     if (!b) return '';
+    // Un billete que es solo de otros no sale en el paso (está en la lista de billetes del día, atenuado).
+    if (!Datos.esPara(b, Billetes.soy())) return '';
     const tiene = Datos.archivosBillete(b).length > 0;
     return html`<a class="chip-billete ${tiene ? '' : 'falta'}" href="#/billetes/${b.id}">
       ${ICON.ticket}<span>${b.titulo}</span>${tiene ? '' : html`<em>pendiente</em>`}</a>`;
@@ -58,8 +60,9 @@ const Piezas = (() => {
     const texto = resumen ? p.corto : p.texto;
     const lugares = p.lugares || [];
     const enlaces = p.enlaces || [];
-    const extra = lugares.length || p.billete || enlaces.length
-      ? html`<div class="chips">${lugares.map(id => chipLugar(id, numeros))}${p.billete ? chipBillete(p.billete) : ''}
+    const billetes = [].concat(p.billete || []);
+    const extra = lugares.length || billetes.length || enlaces.length
+      ? html`<div class="chips">${lugares.map(id => chipLugar(id, numeros))}${billetes.map(chipBillete)}
         ${enlaces.map(e => html`<a class="lugar enlace" href="${e.url}" target="_blank" rel="noopener">${ICON.out}<span>${e.texto}</span></a>`)}</div>`
       : '';
     if (p.tipo === 'tiempo') return html`<li class="paso tiempo"><p>${rich(texto)}</p></li>`;

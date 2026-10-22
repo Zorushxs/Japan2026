@@ -27,6 +27,10 @@ concretas, sitios, alojamientos, nombres).
   Mapas, guías y avatares van una sola vez (`comun`), cifrados con una clave interna que viaja dentro de cada copia
   (marca `<!--KC:…-->`); la cerradura los deja en `window.__COMUNES__`. La prueba tiene el caso «invitado».
 
+- **sw.js** (no va dentro de index.html: se sube tal cual): guarda la página al instalarse y en cada visita pregunta
+  con `If-None-Match`/`If-Modified-Since` usando la copia guardada; si no ha cambiado, 304 y la copia. Así cada móvil
+  solo descarga los ~12 MB cuando se publica una versión nueva. Sin red (o 4 s sin respuesta), la copia.
+
 ## Tecnología y convenciones
 
 - HTML, CSS y JS sin dependencias, mobile-first, tema claro/oscuro y 5 paletas (`data-paleta` en `<html>`: mugiwara
