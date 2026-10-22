@@ -14,6 +14,11 @@ const App = (() => {
       location.replace('#/dia/' + diaDeHoy());
       return;
     }
+    // Si queda alguna ventana abierta (p. ej. un billete en grande), se cierra sin volver atrás en el historial.
+    document.querySelectorAll('dialog[open]').forEach(d => {
+      d.dataset.sinAtras = '1';
+      d.close();
+    });
     current = ROUTES[name] || Calendario;
     const root = document.createElement('div');
     root.className = 'screen';

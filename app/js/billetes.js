@@ -158,7 +158,6 @@ const Billetes = (() => {
         <button value="no" class="btn">Cancelar</button>
       </div>
     </form>`;
-    document.body.append(dialog);
     let elegido = null;
     dialog.querySelectorAll('[data-persona]').forEach(el => {
       el.onclick = () => { elegido = el.dataset.persona; dialog.close('elegido'); };
@@ -169,7 +168,7 @@ const Billetes = (() => {
         resolve(v === 'elegido' ? elegido : v === 'quitar' ? '' : null);
         dialog.remove();
       });
-      dialog.showModal();
+      U.modal(dialog);
       // El foco en «Cancelar»: si no, el primer nombre parece elegido.
       dialog.querySelector('[value="no"]').focus();
     });
@@ -191,7 +190,6 @@ const Billetes = (() => {
         <button value="si" class="btn primary">Guardar</button>
       </div>
     </form>`;
-    document.body.append(dialog);
     const campo = dialog.querySelector('input');
     dialog.querySelectorAll('[data-nombre]').forEach(el => {
       el.onclick = () => { campo.value = el.dataset.nombre; campo.focus(); };
@@ -202,7 +200,7 @@ const Billetes = (() => {
         resolve(v === 'si' ? campo.value.trim() : v === 'quitar' ? '' : null);
         dialog.remove();
       });
-      dialog.showModal();
+      U.modal(dialog);
       campo.focus();
     });
   }
@@ -235,10 +233,9 @@ const Billetes = (() => {
     const quien = a.estado && a.estado.nombre ? ' · ' + a.estado.nombre : '';
     dialog.innerHTML = html`<p>${a.nombre}${quien}</p><img src="${a.url}" alt="${a.nombre}">
       <small>Toca para cerrar · sube el brillo</small>`;
-    document.body.append(dialog);
     dialog.addEventListener('close', () => dialog.remove());
     dialog.addEventListener('click', () => dialog.close());
-    dialog.showModal();
+    U.modal(dialog);
   }
 
   // Los data: URI no se pueden abrir en otra pestaña; un blob, sí.

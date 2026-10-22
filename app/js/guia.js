@@ -60,10 +60,9 @@ const Guia = (() => {
     const dialog = document.createElement('dialog');
     dialog.className = 'jp-grande';
     dialog.innerHTML = html`<p lang="ja">${actual.bloques[i].jp}</p><small>Toca para cerrar</small>`;
-    document.body.append(dialog);
     dialog.addEventListener('close', () => dialog.remove());
     dialog.addEventListener('click', () => dialog.close());
-    dialog.showModal();
+    U.modal(dialog);
   }
 
   async function copiar(i) {

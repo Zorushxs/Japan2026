@@ -86,6 +86,27 @@ const U = (() => {
     info: svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>'),
   };
 
+  // Abre una ventana modal (<dialog>) que se cierra con «atrás» del móvil o del navegador en vez de cambiar de
+  // pantalla: al abrirla se añade una entrada al historial, y «atrás» la consume cerrando la ventana. Si se cierra de
+  // otra manera (tocando, con un botón), se quita esa entrada. App.route cierra las que queden abiertas al cambiar de
+  // pantalla, sin tocar el historial (data-sin-atras).
+  function modal(dialog) {
+    document.body.append(dialog);
+    history.pushState({ modal: true }, '');
+    let porAtras = false;
+    const alAtras = () => {
+      porAtras = true;
+      if (dialog.open) dialog.close();
+    };
+    addEventListener('popstate', alAtras, { once: true });
+    dialog.addEventListener('close', () => {
+      removeEventListener('popstate', alAtras);
+      if (!porAtras && !dialog.dataset.sinAtras) history.back();
+      dialog.remove();
+    });
+    dialog.showModal();
+  }
+
   // Mensaje breve abajo de la pantalla.
   let toastTimer = null;
   function toast(message) {
@@ -99,6 +120,6 @@ const U = (() => {
   return {
     $, esc, html, raw, rich, onActions,
     iso, parse, today, addDays, daysBetween, dow, dowShort, monthName, fmtLong, fmtShort,
-    ICON, toast,
+    ICON, toast, modal,
   };
 })();
