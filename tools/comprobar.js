@@ -37,6 +37,12 @@ function comprobar() {
   });
   if (V.dias.length && V.dias[V.dias.length - 1].fecha !== V.fin) errores.push(`El último día no es ${V.fin}`);
 
+  (V.avisos || []).forEach(a => {
+    if (!a.id || !/^\d{4}-\d\d-\d\d$/.test(a.desde) || !/^\d{4}-\d\d-\d\d$/.test(a.hasta)) {
+      errores.push(`Aviso «${a.id}»: falta id o las fechas desde/hasta (AAAA-MM-DD)`);
+    }
+    if (a.guia && !Datos.guia(a.guia)) errores.push(`Aviso «${a.id}»: no existe la guía «${a.guia}»`);
+  });
   (V.quienVa || []).forEach(f => {
     if (!Datos.excursion(f.id) && !f.titulo) errores.push(`quienVa: «${f.id}» no es una excursión y no tiene titulo`);
     [...(f.si || []), ...(f.quizas || [])].forEach(n => {

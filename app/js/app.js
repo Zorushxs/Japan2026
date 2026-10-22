@@ -147,8 +147,9 @@ const App = (() => {
       document.documentElement.classList.add('invitado');
     }
     route();
-    // Easter egg de los viernes (después de que se pinte la app y de la ventana de «¿Quién eres?», si la hay).
-    setTimeout(() => { if (!document.querySelector('dialog[open]')) Jojo.avisar(); }, 1500);
+    // Recordatorios con fecha y, si no hay ninguno, el easter egg de los viernes (después de que se pinte la app y de
+    // la ventana de «¿Quién eres?», si la hay).
+    setTimeout(() => { if (!document.querySelector('dialog[open]') && !Avisos.mostrar()) Jojo.avisar(); }, 1500);
     // Lo compartido (billetes y quién va a cada excursión): al arrancar y, con esas pantallas abiertas, cada 20 s.
     Sincro.traer();
     setInterval(() => {

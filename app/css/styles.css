@@ -448,6 +448,11 @@ dialog.ask input {
   color: var(--ink); font: inherit;
 }
 dialog.ask .chips { margin: 0; }
+dialog.aviso-modal form { text-align: center; }
+dialog.aviso-modal p { margin: 0; }
+.aviso-modal-ico { font-size: 40px; line-height: 1; }
+dialog.aviso-modal .btn-ruta { justify-self: center; margin: 0; }
+dialog.aviso-modal .ask-btns { justify-content: center; }
 .ask-btns { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 
 /* Botones de persona (asignar billetes). */

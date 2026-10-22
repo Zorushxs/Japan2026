@@ -98,6 +98,9 @@ concretas, sitios, alojamientos, nombres).
   (id de una excursión; si no lo es, `titulo` y `emoji` propios) es el punto de partida. Al tocar una cara pasa de va →
   quizá → no va y se guarda en Sincro con la clave `va|<id>|<nombre>` y el campo `valor`; lo tocado manda sobre los datos.
   Cada uno solo puede tocar su cara (según «Soy: …»); los de `VIAJE.admins`, las de todos.
+- **Avisos** ([app/js/avisos.js](app/js/avisos.js)): `VIAJE.avisos = [{ id, desde, hasta, titulo, texto, guia? }]`. Al abrir
+  la app entre `desde` y `hasta` sale una ventana. «Ya está hecho» lo quita a todos (Sincro, clave `aviso|<id>`, `valor:
+  'hecho'`); «Recuérdamelo mañana», solo en ese móvil hasta el día siguiente.
 - «Soy: …» (`viaje:soy`) es solo de cada móvil: pone tu billete el primero y marcado.
 - `VIAJE.grupo` (los nombres de los botones) y `VIAJE.avatares` (`{ nombre: 'avatares/x.webp' }`, fotos redondas en
   `privado/avatares/`, 256 px) y `VIAJE.marcos` (`{ nombre: 'dorado' | 'oscuro' | 'nika' | 'zoro' }`; nika = Gear 5: nubes, sol de Nika y rebote de goma; zoro = el dorado más tres tajos de katana que dibujan una Z;: anillo de oro con bisel, destello que lo recorre, corona SVG y chispas; o de humo con pluma, sello 鴉 y plumas de cuervo que caen); sin foto,
