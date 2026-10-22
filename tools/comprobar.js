@@ -34,6 +34,9 @@ function comprobar() {
   });
   if (V.dias.length && V.dias[V.dias.length - 1].fecha !== V.fin) errores.push(`El último día no es ${V.fin}`);
 
+  Object.entries(V.alojamientos || {}).forEach(([clave, a]) => {
+    if (a.guia && !Datos.guia(a.guia)) errores.push(`Alojamiento ${clave}: no existe la guía «${a.guia}»`);
+  });
   (V.guias || []).forEach(g => g.bloques.forEach(b => {
     (b.lugares || []).forEach(id => {
       if (!Datos.existeLugar(id)) errores.push(`Guía ${g.id}: no existe el lugar «${id}»`);

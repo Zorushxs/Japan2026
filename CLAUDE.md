@@ -63,7 +63,7 @@ concretas, sitios, alojamientos, nombres).
 - **Lugar**: `nombre`, `info?` (qué es, sale en detalle), `url?` (enlace propio de Google Maps), `q` (búsqueda de Google Maps), `lat`/`lon` opcionales (sin
   ellas no sale en la captura).
 - **Alojamiento** (`alojamientos.<CLAVE>`): `nombre`, `direccion`, `q?` (búsqueda de Google Maps, p. ej. coordenadas
-  exactas; si no hay, la dirección), `notas?`, `lat`/`lon`.
+  exactas; si no hay, la dirección), `notas?`, `guia?` (id de una guía: sale su tarjeta en la ficha), `lat`/`lon`.
   En el plan se nombra como lugar `'aloj:<CLAVE>'` (sale con una casa, sin número). El día con `alojamiento` es el del
   check-in; `Datos.duerme`/`despierta` dicen dónde se duerme cada noche, y cada día enseña su alojamiento.
 - **Días de coche**: botón con la ruta entera (del alojamiento donde te levantas, por las paradas del plan, hasta donde

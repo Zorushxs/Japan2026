@@ -163,6 +163,7 @@ const Piezas = (() => {
         <a class="btn-ruta" href="${Datos.urlLugar(id)}" target="_blank" rel="noopener">${ICON.pin}<span>Ver en Google Maps</span></a>
         <a class="btn-ruta" href="${Datos.urlComoLlegar(id, modoViaje)}" target="_blank" rel="noopener">${ICON.route}<span>Cómo llegar</span></a>
       </div>
+      ${a.guia && Datos.guia(a.guia) ? guia(Datos.guia(a.guia)) : ''}
       ${extra || ''}
     </div>`;
   }
