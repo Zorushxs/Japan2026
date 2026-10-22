@@ -490,3 +490,24 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
   50% { box-shadow: 0 0 16px 4px rgb(245 197 24 / .9); }
 }
 @media (prefers-reduced-motion: reduce) { .marco::before, .marco-dorado { animation: none; } }
+
+/* Marco oscuro: anillo de humo negro y morado que gira al revés, aura de sombra, pluma de cuervo y sello 鴉. */
+.marco-oscuro::before {
+  background: conic-gradient(#09090c, #3a2550, #09090c, #1c1c24, #5a1010, #09090c, #2b1d3a, #09090c);
+  animation: marco-gira 7s linear infinite reverse;
+}
+.marco-oscuro::after { content: "🪶"; transform: translateX(-50%) rotate(28deg); filter: grayscale(1) brightness(.35); }
+.marco-oscuro { animation: marco-sombra 2.6s ease-in-out infinite; }
+.marco-oscuro > .avatar { filter: saturate(.85) contrast(1.05); }
+.sello {
+  position: absolute; z-index: 3; right: -5px; bottom: -3px; display: grid; place-items: center;
+  width: 15px; height: 15px; border-radius: 3px; background: #b3121b; color: #fff;
+  font: 700 10px/1 var(--jp); box-shadow: 0 0 0 1.5px #1a0a0a; transform: rotate(-8deg);
+}
+.marco.mini .sello { display: none; }
+.marco.grande .sello { width: 26px; height: 26px; font-size: 17px; right: -6px; bottom: 0; border-radius: 5px; }
+@keyframes marco-sombra {
+  0%, 100% { box-shadow: 0 0 6px 2px rgb(25 10 40 / .65), 0 0 14px 4px rgb(0 0 0 / .35); }
+  50% { box-shadow: 0 0 14px 5px rgb(70 30 100 / .7), 0 0 26px 10px rgb(0 0 0 / .45); }
+}
+@media (prefers-reduced-motion: reduce) { .marco-oscuro { animation: none; } }

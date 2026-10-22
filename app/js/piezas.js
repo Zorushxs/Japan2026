@@ -151,7 +151,9 @@ const Piezas = (() => {
   function avatar(nombre, clase) {
     const marco = (Datos.V.marcos || {})[nombre];
     const dentro = avatarSolo(nombre, clase);
-    return marco ? html`<span class="marco marco-${marco} ${clase || ''}">${dentro}</span>` : dentro;
+    // El marco oscuro lleva además un sello japonés (hanko) con 鴉, «cuervo».
+    const extra = marco === 'oscuro' ? html`<span class="sello" lang="ja" aria-hidden="true">鴉</span>` : '';
+    return marco ? html`<span class="marco marco-${marco} ${clase || ''}">${dentro}${extra}</span>` : dentro;
   }
   function avatarSolo(nombre, clase) {
     const foto = (Datos.V.avatares || {})[nombre];
