@@ -621,3 +621,56 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .yo.no-tuyo { background: var(--mute); }
 .btn.drive { width: 100%; justify-content: flex-start; margin: 4px 0 14px; text-align: left; }
 .btn.drive small { display: block; font-weight: 400; color: var(--mute); font-size: 12.5px; }
+
+/* Marco «nika» (Gear 5, despertar de la Gomu Gomu): anillo de nubes blancas con reflejos rosa y lila que gira,
+   resplandor de sol, sol de Nika encima, nubes que flotan y un rebote de goma cada pocos segundos. */
+.marco-nika { --g: 3.5px; padding: var(--g); animation: nika-goma 3.2s ease-in-out infinite, nika-sol 3.2s ease-in-out infinite; }
+.marco-nika.mini { --g: 2px; animation: nika-sol 3.2s ease-in-out infinite; }
+.marco-nika.grande { --g: 6px; }
+.marco-nika::before {
+  background: conic-gradient(#ffffff, #f6e9ff 12%, #ffffff 22%, #ffd7ef 32%, #ffffff 44%, #ece4ff 56%, #ffffff 66%,
+    #ffe9c7 76%, #ffffff 86%, #f3dcff 94%, #ffffff);
+  box-shadow: inset 0 0 0 1px rgb(150 110 200 / .55), 0 0 0 1px rgb(150 110 200 / .5);
+  animation: marco-gira 6s linear infinite;
+}
+.marco-nika::after { content: none; }
+.marco-nika > .avatar { box-shadow: 0 0 0 1px rgb(150 110 200 / .6); }
+.sol-nika {
+  position: absolute; z-index: 3; top: -30%; left: 50%; width: 46%; height: auto; transform: translateX(-50%);
+  filter: drop-shadow(0 0 3px rgb(255 200 60 / .9)); animation: marco-gira 12s linear infinite reverse;
+  transform-origin: 50% 50%;
+}
+.nube {
+  position: absolute; z-index: 3; width: 34%; height: 16%; border-radius: 99px; background: #fff; opacity: .95;
+  box-shadow: 0 1px 2px rgb(120 90 170 / .35);
+}
+.nube::before, .nube::after { content: ""; position: absolute; border-radius: 50%; background: #fff; }
+.nube::before { width: 55%; height: 170%; left: 12%; top: -70%; }
+.nube::after { width: 40%; height: 130%; right: 12%; top: -45%; }
+.nube.n1 { left: -14%; bottom: 14%; animation: nika-nube 4s ease-in-out infinite; }
+.nube.n2 { right: -16%; bottom: 30%; width: 28%; animation: nika-nube 4s ease-in-out 1.3s infinite; }
+.nube.n3 { right: 2%; bottom: -6%; width: 24%; animation: nika-nube 4s ease-in-out 2.6s infinite; }
+.marco-nika.mini .nube, .cara .nube { display: none; }
+.marco-nika.mini .sol-nika { width: 60%; top: -40%; }
+.marco-nika .sol-nika { animation: nika-sol-gira 12s linear infinite; }
+@keyframes nika-sol-gira { to { transform: translateX(-50%) rotate(-1turn); } }
+@keyframes nika-goma {
+  0%, 70%, 100% { transform: scale(1, 1); }
+  76% { transform: scale(1.12, .88); }
+  82% { transform: scale(.92, 1.1); }
+  88% { transform: scale(1.04, .97); }
+  94% { transform: scale(.99, 1.01); }
+}
+@keyframes nika-sol {
+  0%, 100% { box-shadow: 0 0 10px 2px rgb(255 214 90 / .45), 0 0 22px 6px rgb(255 240 200 / .35); }
+  50% { box-shadow: 0 0 16px 4px rgb(255 214 90 / .7), 0 0 30px 10px rgb(255 240 200 / .5); }
+}
+@keyframes nika-nube { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) { .marco-nika, .marco-nika::before, .sol-nika, .nube { animation: none !important; } }
+.marco-nika .sol-nika { animation: nika-sol-late 1.6s ease-in-out infinite; }
+@keyframes nika-sol-late { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.1); } }
+.nube { width: 26%; height: 12%; }
+.nube.n1 { left: -10%; bottom: 10%; }
+.nube.n2 { right: -12%; bottom: 34%; width: 22%; }
+.nube.n3 { right: 4%; bottom: -4%; width: 19%; }
+@media (prefers-reduced-motion: reduce) { .marco-nika .sol-nika { animation: none; } }

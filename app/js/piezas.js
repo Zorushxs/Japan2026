@@ -166,6 +166,17 @@ const Piezas = (() => {
     <span class="chispa c1" aria-hidden="true">${ESTRELLA}</span>
     <span class="chispa c2" aria-hidden="true">${ESTRELLA}</span>
     <span class="chispa c3" aria-hidden="true">${ESTRELLA}</span>`);
+  // Marco «nika» (Gear 5): sol de Nika encima y nubes que flotan alrededor.
+  const NIKA = U.raw(`<svg class="sol-nika" viewBox="0 0 40 40" aria-hidden="true">
+      <g fill="#ffd23f" stroke="#c77d0a" stroke-width="1">
+        ${Array.from({ length: 12 }, (_, i) => `<path transform="rotate(${i * 30} 20 20)" d="M20 1.5 L22.6 10 L17.4 10 Z"/>`).join('')}
+      </g>
+      <circle cx="20" cy="20" r="9" fill="#fff6d8" stroke="#c77d0a" stroke-width="1.2"/>
+      <circle cx="16.8" cy="18.6" r="1.4" fill="#3a2a10"/><circle cx="23.2" cy="18.6" r="1.4" fill="#3a2a10"/>
+      <path d="M15.5 22 Q20 27 24.5 22" fill="none" stroke="#3a2a10" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+    <span class="nube n1" aria-hidden="true"></span><span class="nube n2" aria-hidden="true"></span>
+    <span class="nube n3" aria-hidden="true"></span>`);
   const COLORES = ['#d64545', '#2f8f5b', '#3a6fd8', '#c27c0e', '#8a4fd0', '#0f8a8a', '#d0477f', '#5b6b2f', '#7a5230'];
   function avatar(nombre, clase) {
     const marco = (Datos.V.marcos || {})[nombre];
@@ -173,7 +184,7 @@ const Piezas = (() => {
     // El marco oscuro lleva además un sello japonés (hanko) con 鴉, «cuervo»; el dorado, el destello que recorre el
     // anillo, una corona de oro y tres chispas.
     const extra = marco === 'oscuro' ? html`<span class="sello" lang="ja" aria-hidden="true">鴉</span>`
-      : marco === 'dorado' ? DORADO : '';
+      : marco === 'dorado' ? DORADO : marco === 'nika' ? NIKA : '';
     return marco ? html`<span class="marco marco-${marco} ${clase || ''}">${dentro}${extra}</span>` : dentro;
   }
   function avatarSolo(nombre, clase) {
