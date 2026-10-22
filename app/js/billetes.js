@@ -67,6 +67,7 @@ const Billetes = (() => {
         ${dia ? html` · <a href="#/dia/${dia.fecha}">ver el día</a>` : ''}</p>
       ${b.nota ? html`<p class="billete-nota">${U.rich(b.nota)}</p>` : ''}
       ${b.tramos ? vuelos(b) : ''}
+      ${Subidas.seccion(b.subidas)}
       ${b.guia && Datos.guia(b.guia) ? html`<div class="guias-dia">${Piezas.guia(Datos.guia(b.guia), true)}</div>` : ''}
       ${b.drive ? html`<a class="btn drive" href="${b.drive}" target="_blank" rel="noopener">${ICON.out}
         <span>Este billete en Drive <small>(copia de los originales, por si acaso)</small></span></a>` : ''}
@@ -82,6 +83,7 @@ const Billetes = (() => {
             ${archivos.filter(a => a !== mio).map(a => archivo(b, a, yo, true, T))}
           </details>`
         : ordenados.map(a => archivo(b, a, yo, reparto, T))}`;
+    Subidas.montar(root);
     const otros = root.querySelector('details.otros');
     if (otros) otros.addEventListener('toggle', () => { otrosAbierto = otros.open; });
     const de = el => archivos[Number(el.dataset.i)];

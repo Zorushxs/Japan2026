@@ -95,6 +95,11 @@ concretas, sitios, alojamientos, nombres).
   `privado/avatares/`, 256 px) y `VIAJE.marcos` (`{ nombre: 'dorado' | 'oscuro' | 'nika' }`; nika = Gear 5: nubes, sol de Nika y rebote de goma;: anillo de oro con bisel, destello que lo recorre, corona SVG y chispas; o de humo con pluma y sello 鴉); sin foto,
   inicial en un círculo con un color fijo por posición en el grupo
   (`Piezas.avatar`).
+- **Subidas** ([app/js/subidas.js](app/js/subidas.js)): huecos para subir desde el móvil el comprobante de una reserva
+  (foto reducida a 1600 px JPEG o PDF de hasta 3 MB). Se ponen con `subidas: { id, titulo }` en una guía, un día o un
+  billete (el mismo `id` en varios sitios comparte los archivos). Van cifrados con la clave de la app en
+  `viaje/<sala>/subidas/<hash>/<id>` (`Sincro.subir/listarSubidas/borrarSubida`); la última lista vista se guarda en el
+  móvil. No salen en la versión de invitado.
 - Reglas de Firebase: lectura y escritura solo en `viaje/$sala` (la raíz cerrada) y validación de `{ c, t }`.
 - Prueba: `node tests/sincro.test.js` (dos «móviles» contra una base de datos falsa).
 

@@ -18,7 +18,9 @@ const Guia = (() => {
       ${g.resumen ? html`<p class="resumen">${rich(g.resumen)}</p>` : ''}
       ${dias.length ? html`<p class="hint">Días: ${dias.map((d, i) =>
         html`${i ? ', ' : ''}<a href="#/dia/${d.fecha}">${U.fmtShort(d.fecha)}</a>`)}</p>` : ''}
+      ${Subidas.seccion(g.subidas)}
       <div class="guia">${g.bloques.map(bloque)}</div>`;
+    Subidas.montar(root);
     U.onActions(root, {
       grande: el => grande(el.dataset.i),
       copiar: el => copiar(el.dataset.i),

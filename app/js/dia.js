@@ -37,7 +37,9 @@ const Dia = (() => {
         ${Piezas.cabeceraPlan()}
         ${Piezas.plan(d.plan, numeros)}
         ${excursiones(d)}
+        ${Subidas.seccion(d.subidas)}
       </div>`;
+    Subidas.montar(root);
   }
 
   const flecha = (dia, icono, label) => (dia

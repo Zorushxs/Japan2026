@@ -734,3 +734,22 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 
 /* Invitado: 5 pestañas en vez de 6. */
 .invitado .nav { grid-template-columns: repeat(5, 1fr); }
+
+/* Subidas (comprobantes de reservas). */
+.subidas { margin: 14px 0 18px; padding: 12px 14px; border: 1px dashed var(--accent); border-radius: var(--r);
+  background: color-mix(in srgb, var(--accent) 5%, var(--panel)); }
+.subidas-cab { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.subidas-cab .h2 { margin: 0; font-size: 17px; }
+.subidas .subir { cursor: pointer; }
+.subidas .subir svg { transform: rotate(180deg); }
+.subidas-estado { margin: 8px 0; }
+.subidas-lista { display: grid; gap: 8px; }
+.subida { display: flex; align-items: center; gap: 10px; padding: 6px; border-radius: 12px; background: var(--panel);
+  border: 1px solid var(--line); }
+.subida img, .subida-pdf { width: 64px; height: 64px; flex: none; border-radius: 8px; object-fit: cover; cursor: zoom-in;
+  background: var(--hover); }
+.subida-pdf { display: grid; place-items: center; border: 0; color: var(--accent); font-size: 12px; font-weight: 700; }
+.subida-txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.subida-txt b { font-size: 14px; overflow-wrap: anywhere; }
+.subida-txt small { color: var(--mute); font-size: 12px; }
+.subida .icon-btn { width: 34px; height: 34px; }

@@ -106,6 +106,45 @@ const Sincro = (() => {
     enviar();
   }
 
+  // ---------- Subidas (comprobantes de reservas: fotos, capturas o PDF) ----------
+  // Cada «hueco» (p. ej. 'locker-25') es una carpeta en la base de datos: viaje/<sala>/subidas/<hash del hueco>/<id>.
+  // Cada archivo va cifrado con la clave de la app, como los billetes. Lo último que se vio se guarda en este móvil.
+  const CACHE_SUB = 'viaje:subidas:';
+  const urlSubidas = async hueco => `${cfg.url.replace(/\/+$/, '')}/viaje/${cfg.sala}/subidas/${await resumen('subida|' + hueco)}`;
+  function subidasGuardadas(hueco) {
+    try { return JSON.parse(localStorage.getItem(CACHE_SUB + hueco)) || []; } catch { return []; }
+  }
+  function guardarSubidas(hueco, lista) {
+    try { localStorage.setItem(CACHE_SUB + hueco, JSON.stringify(lista)); } catch {}
+  }
+  async function listarSubidas(hueco) {
+    if (!activo()) return subidasGuardadas(hueco);
+    const r = await fetch(await urlSubidas(hueco) + '.json', { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const remoto = (await r.json()) || {};
+    const lista = [];
+    for (const [id, valor] of Object.entries(remoto)) {
+      try { lista.push({ id, ...(await descifrar(valor.c)) }); } catch {}
+    }
+    lista.sort((a, b) => a.t - b.t);
+    guardarSubidas(hueco, lista);
+    return lista;
+  }
+  // archivo: { nombre, tipo, datos (data: URI), quien }
+  async function subir(hueco, archivo) {
+    if (!activo()) throw new Error('sin base de datos');
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    const t = Date.now();
+    const r = await fetch(`${await urlSubidas(hueco)}/${id}.json`, {
+      method: 'PUT', body: JSON.stringify({ c: await cifrar({ ...archivo, t }), t }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+  }
+  async function borrarSubida(hueco, id) {
+    const r = await fetch(`${await urlSubidas(hueco)}/${id}.json`, { method: 'DELETE' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+  }
+
   // «Sincronizado hace 2 min», «Sin conexión…», «Solo en este móvil…».
   function texto() {
     const pendientes = Object.values(estado.items).some(v => v.pendiente);
@@ -122,6 +161,7 @@ const Sincro = (() => {
 
   return {
     clave, item, nombres, cambiar, traer, texto, activo,
+    listarSubidas, subir, borrarSubida, subidasGuardadas,
     onCambio: fn => { alCambiar = fn; },
   };
 })();
