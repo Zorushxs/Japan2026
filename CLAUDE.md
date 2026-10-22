@@ -113,5 +113,7 @@ concretas, sitios, alojamientos, nombres).
    SwiftShader), al doble de resolución, nombres en castellano/inglés/latín, WebP. CARTO pide clave y las capturas de
    Google necesitan la Static Maps API (de pago).
 4. `node tools/build.js` — comprueba los datos (`tools/comprobar.js`), junta y cifra en `index.html`.
-5. Probar: `node tests/cerradura.js` (contraseña buena y mala en Chrome sin ventana). Capturas a 390 px de la app sin
+5. Auditoría de privacidad: `node tests/auditoria.js` (index.html sin descifrar, versión de invitado, Firebase y repo).
+   Es pública: todo lo que busca lo saca de privado/, no escribas datos en ella.
+6. Probar: `node tests/cerradura.js` (contraseña buena y mala en Chrome sin ventana). Capturas a 390 px de la app sin
    cifrar: `python -m http.server 8790` y `bash tests/captura.sh salida.png "/dia/AAAA-MM-DD" light|dark`.
