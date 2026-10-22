@@ -674,3 +674,49 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .nube.n2 { right: -12%; bottom: 34%; width: 22%; }
 .nube.n3 { right: 4%; bottom: -4%; width: 19%; }
 @media (prefers-reduced-motion: reduce) { .marco-nika .sol-nika { animation: none; } }
+
+/* ---------- Vuelos (tarjetas de embarque) ---------- */
+.vuelos { display: grid; gap: 0; margin: 14px 0 18px; }
+.tramo { border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); overflow: hidden; }
+.tr-cab {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 14px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel)); border-bottom: 1px dashed var(--line);
+}
+.tr-num {
+  display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent);
+  color: var(--accent-ink); font-size: 12px; font-weight: 800;
+}
+.tr-vuelo { padding: 2px 9px; border-radius: 99px; background: var(--ink); color: var(--bg); font-weight: 800; font-size: 13px; letter-spacing: .03em; }
+.tr-cab small { color: var(--mute); }
+.tr-ruta { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 6px; padding: 14px 14px 8px; }
+.tr-punto { display: flex; flex-direction: column; line-height: 1.25; }
+.tr-punto.a { align-items: flex-end; text-align: right; }
+.tr-iata { font: 800 32px/1 var(--sans); letter-spacing: .02em; }
+.tr-hora { font-size: 20px; font-weight: 700; color: var(--accent); margin-top: 2px; }
+.tr-punto small { color: var(--mute); font-size: 12.5px; }
+.tr-fecha { text-transform: capitalize; }
+.tr-linea { position: relative; width: 64px; height: 2px; border-top: 2px dashed var(--line); }
+.tr-linea span { position: absolute; left: 50%; top: -13px; transform: translateX(-50%); font-size: 18px; color: var(--accent); }
+.tr-extra { margin: 0; padding: 0 14px 8px; color: var(--mute); font-size: 13px; }
+.tr-aviso {
+  margin: 0 14px 10px; padding: 8px 10px; border-radius: 10px; font-size: 14px;
+  background: color-mix(in srgb, var(--aviso) 10%, var(--panel)); border-left: 3px solid var(--aviso);
+}
+.tr-asientos { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 14px; }
+.tr-asiento {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 99px;
+  border: 1px solid var(--line); background: var(--bg); font-size: 13.5px;
+}
+.tr-asiento b { color: var(--accent); }
+.tr-escala {
+  margin: 0 22px; padding: 10px 14px; border-left: 3px dashed var(--accent); font-size: 14px; color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+.reserva-vuelo { margin-top: 14px; padding: 14px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
+.rv-loc { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.rv-loc small { color: var(--mute); font-size: 12.5px; }
+.rv-loc b { font: 800 26px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: .12em; }
+.rv-loc .btn-ruta { margin-left: auto; }
+.rv-pax { display: grid; gap: 6px; margin: 10px 0 4px; }
+.rv-p { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.rv-p code { margin-left: auto; font: 600 13px/1 ui-monospace, Consolas, monospace; color: var(--mute); }

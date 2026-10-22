@@ -65,6 +65,7 @@ const Billetes = (() => {
       <p class="sub-h">${U.fmtLong(b.fecha)}${b.hora ? ' · ' + b.hora : ''}
         ${dia ? html` · <a href="#/dia/${dia.fecha}">ver el día</a>` : ''}</p>
       ${b.nota ? html`<p class="billete-nota">${U.rich(b.nota)}</p>` : ''}
+      ${b.tramos ? vuelos(b) : ''}
       ${b.guia && Datos.guia(b.guia) ? html`<div class="guias-dia">${Piezas.guia(Datos.guia(b.guia), true)}</div>` : ''}
       ${b.drive ? html`<a class="btn drive" href="${b.drive}" target="_blank" rel="noopener">${ICON.out}
         <span>Este billete en Drive <small>(copia de los originales, por si acaso)</small></span></a>` : ''}
@@ -92,6 +93,7 @@ const Billetes = (() => {
         Sincro.cambiar(Sincro.clave(b, a), { usado: !a.estado.usado });
       },
       soy: () => elegirSoy(),
+      copiar: el => copiarTexto(el.dataset.texto),
     });
     // Si en este móvil aún no se ha dicho quién eres, se pregunta nada más entrar.
     if (reparto && !yo && !yaPreguntado) {
@@ -119,6 +121,60 @@ const Billetes = (() => {
         : html`<p class="yo-asiento">Aún no tienes ${T.cosa} asignado.</p>`}
       <button type="button" class="yo-cambiar" data-act="soy">No soy ${yo}</button>
     </div>`;
+  }
+
+  // ---------- Vuelos ----------
+  // Tramos como tarjetas de embarque (códigos de aeropuerto, horas, terminales, avisos y asientos con avatar), la escala
+  // entre medias y la reserva con el localizador grande y los números de billete.
+  const SIGNOS = '·';
+  function punto(p, lado) {
+    return html`<div class="tr-punto ${lado}">
+      <b class="tr-iata">${p.iata}</b>
+      <span class="tr-hora">${p.hora || '—'}</span>
+      <small>${p.ciudad}${p.terminal ? ' ' + SIGNOS + ' ' + p.terminal : ''}</small>
+      <small class="tr-fecha">${U.fmtShort(p.fecha)}</small>
+    </div>`;
+  }
+  function tramo(t, n) {
+    const asientos = Object.entries(t.asientos || {});
+    return html`<div class="tramo">
+      <div class="tr-cab">
+        <span class="tr-num">${n}</span>
+        <b>${t.aerolinea}</b>
+        <span class="tr-vuelo">${t.vuelo}</span>
+        ${t.tambien ? html`<small>también ${t.tambien}</small>` : ''}
+      </div>
+      <div class="tr-ruta">${punto(t.de, 'de')}<div class="tr-linea" aria-hidden="true"><span>✈</span></div>${punto(t.a, 'a')}</div>
+      ${t.avion || t.clase ? html`<p class="tr-extra">${[t.avion, t.clase].filter(Boolean).join(' · ')}</p>` : ''}
+      ${t.aviso ? html`<p class="tr-aviso">⚠️ ${U.rich(t.aviso)}</p>` : ''}
+      ${asientos.length ? html`<div class="tr-asientos">${asientos.map(([nombre, asiento]) => html`
+        <span class="tr-asiento">${Piezas.avatar(nombre, 'mini')}<span>${nombre}</span><b>${asiento}</b></span>`)}</div>` : ''}
+    </div>
+    ${t.escala ? html`<div class="tr-escala">${U.rich(t.escala)}</div>` : ''}`;
+  }
+  function vuelos(b) {
+    const r = b.reserva || {};
+    const pax = Object.entries(b.pasajeros || {});
+    return html`<div class="vuelos">
+      ${b.tramos.map((t, i) => tramo(t, i + 1))}
+      ${r.localizador ? html`<div class="reserva-vuelo">
+        <div class="rv-loc"><small>Localizador</small><b>${r.localizador}</b>
+          <button type="button" class="btn-ruta" data-act="copiar" data-texto="${r.localizador}">Copiar</button></div>
+        ${r.trip ? html`<p class="hint">Trip.com nº ${r.trip}</p>` : ''}
+        ${pax.length ? html`<div class="rv-pax">${pax.map(([nombre, billete]) => html`
+          <span class="rv-p">${Piezas.avatar(nombre, 'mini')}<span>${nombre}</span><code>${billete}</code></span>`)}</div>` : ''}
+        <p class="hint">Para facturar en la web de la aerolínea: localizador y apellido.</p>
+      </div>` : ''}
+    </div>`;
+  }
+
+  async function copiarTexto(texto) {
+    try {
+      await navigator.clipboard.writeText(texto);
+      U.toast('Copiado: ' + texto);
+    } catch {
+      U.toast('No se ha podido copiar.');
+    }
   }
 
   const esImagen = a => /\.(png|jpe?g|webp|gif)$/i.test(a.ruta);
