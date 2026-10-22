@@ -52,6 +52,11 @@ const Piezas = (() => {
       html`<p><b>${Datos.lugar(id).nombre}:</b> ${rich(Datos.lugar(id).info)}</p>`)}</div>`;
   }
 
+  // Capturas de un paso (`imagenes: [{ ruta, pie? }]`, en privado/guias/), plegadas para no alargar el plan.
+  const capturas = lista => html`<details class="capturas"><summary>Capturas (${lista.length})</summary>
+    ${lista.map(c => html`<figure class="guia-img"><img src="${Datos.archivo(c.ruta)}" alt="${c.pie || ''}" loading="lazy">
+      ${c.pie ? html`<figcaption>${c.pie}</figcaption>` : ''}</figure>`)}</details>`;
+
   // Un paso del plan. Los de tipo «tiempo» son una línea pequeña entre dos pasos. En resumen solo salen los que
   // tienen `corto`, con ese texto.
   function paso(p, numeros) {
@@ -69,6 +74,7 @@ const Piezas = (() => {
     const contenido = html`
         <p>${rich(texto)}</p>
         ${p.sub && !resumen ? html`<ul class="sub">${p.sub.map(s => html`<li>${rich(s)}</li>`)}</ul>` : ''}
+        ${p.imagenes && !resumen ? capturas(p.imagenes) : ''}
         ${extra}
         ${resumen ? '' : infoLugares(lugares)}`;
     // Un paso solo de algunos (`para`) o de todos menos algunos (`excepto`): plegado para quien no va, abierto para

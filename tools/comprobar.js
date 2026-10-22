@@ -13,6 +13,9 @@ function comprobar() {
       if (!Datos.billete(id)) errores.push(`${donde}, paso ${i + 1}: no existe el billete «${id}»`);
     });
     if (!p.texto) errores.push(`${donde}, paso ${i + 1}: sin texto`);
+    (p.imagenes || []).forEach(c => {
+      if (!fs.existsSync(path.join(PRIVADO, c.ruta))) errores.push(`${donde}, paso ${i + 1}: no está la imagen privado/${c.ruta}`);
+    });
   });
   const mapas = (donde, entidad) => (entidad.mapas || []).forEach(m => m.lugares.forEach(id => {
     if (!Datos.existeLugar(id)) errores.push(`${donde}, mapa «${m.titulo}»: no existe el lugar «${id}»`);

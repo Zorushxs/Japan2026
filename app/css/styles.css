@@ -284,6 +284,10 @@ iframe.mapa-google {
 .guia-img { margin: 12px 0; }
 .guia-img img { display: block; width: 100%; border-radius: var(--r); border: 1px solid var(--line); }
 .guia-img figcaption { font-size: 13px; color: var(--mute); margin-top: 4px; }
+/* Capturas de un paso del plan: plegadas; las de móvil, estrechas y centradas. */
+.capturas { margin: 8px 0; }
+.capturas summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--accent); }
+.capturas .guia-img { max-width: 340px; margin: 12px auto; }
 .billete-pdf {
   display: flex; flex-direction: column; gap: 4px; margin: 14px 0; padding: 14px; border-radius: var(--r);
   border: 1px solid var(--line); background: var(--panel);
