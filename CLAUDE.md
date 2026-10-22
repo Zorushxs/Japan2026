@@ -60,7 +60,8 @@ concretas, sitios, alojamientos, nombres).
   coinciden con los del plan.
 - **Billete**: `id`, `titulo`, `fecha`, `hora?`, `nota?`, `archivo` o `archivos` (rutas dentro de `privado/`, p. ej.
   `billetes/x.pdf`; también `{ ruta, nombre }`, uno por persona). Sin archivo, sale como pendiente. Para QR mejor una
-  imagen (PNG/JPG) que un PDF: se ve dentro de la app, sobre blanco.
+  imagen (PNG/JPG) que un PDF: se ve dentro de la app, sobre blanco. **De un PDF se saca cada página ENTERA, sin
+  recortar nada** (el usuario lo pidió así): página a escala 2 con pypdfium2, PNG; el PDF original en `privado/originales/`.
   Para repartir entre parte del grupo: `para: [nombres]`; y otros textos: `cosa: 'pase'`, `marca: ['Sin canjear',
   'Canjeado', 'canjeados']` (por defecto «asiento» y «Usado»). `reparto: false` para no repartir (p. ej. los coches).
 
