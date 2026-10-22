@@ -95,7 +95,7 @@ concretas, sitios, alojamientos, nombres).
   deriva con `encrypt` y `decrypt`). Gana el cambio más reciente de cada entrada.
 - «Soy: …» (`viaje:soy`) es solo de cada móvil: pone tu billete el primero y marcado.
 - `VIAJE.grupo` (los nombres de los botones) y `VIAJE.avatares` (`{ nombre: 'avatares/x.webp' }`, fotos redondas en
-  `privado/avatares/`, 256 px) y `VIAJE.marcos` (`{ nombre: 'dorado' | 'oscuro' | 'nika' | 'zoro' }`; nika = Gear 5: nubes, sol de Nika y rebote de goma; zoro = el dorado más tres tajos de katana que dibujan una Z;: anillo de oro con bisel, destello que lo recorre, corona SVG y chispas; o de humo con pluma y sello 鴉); sin foto,
+  `privado/avatares/`, 256 px) y `VIAJE.marcos` (`{ nombre: 'dorado' | 'oscuro' | 'nika' | 'zoro' }`; nika = Gear 5: nubes, sol de Nika y rebote de goma; zoro = el dorado más tres tajos de katana que dibujan una Z;: anillo de oro con bisel, destello que lo recorre, corona SVG y chispas; o de humo con pluma, sello 鴉 y plumas de cuervo que caen); sin foto,
   inicial en un círculo con un color fijo por posición en el grupo
   (`Piezas.avatar`).
 - **Subidas** ([app/js/subidas.js](app/js/subidas.js)): huecos para subir desde el móvil el comprobante de una reserva

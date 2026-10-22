@@ -788,7 +788,7 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .paso-de-quien { display: inline-flex; flex: none; }
 .paso-de-quien > * { margin-left: -6px; box-shadow: 0 0 0 2px var(--panel); border-radius: 50%; }
 .paso-de-quien > :first-child { margin-left: 0; }
-.paso-de-quien .tajos, .paso-de-quien .sello, .paso-de-quien .corona, .paso-de-quien .chispa, .paso-de-quien .nube, .paso-de-quien .sol-nika { display: none; }
+.paso-de-quien .pluma, .paso-de-quien .tajos, .paso-de-quien .sello, .paso-de-quien .corona, .paso-de-quien .chispa, .paso-de-quien .nube, .paso-de-quien .sol-nika { display: none; }
 .paso-de:not([open]) { opacity: .75; }
 .paso-sin { flex: none; padding: 1px 7px; border-radius: 99px; background: var(--hover); color: var(--mute); font-size: 11px; font-weight: 700; }
 
@@ -854,3 +854,20 @@ dialog.jojo h2 { margin: 4px 0 0; font: 900 30px/1.05 Impact, "Arial Black", var
   .tajos path { animation: none; stroke-dashoffset: 0; opacity: .8; stroke-width: 3; }
   .marco-zoro > .avatar { animation: none; }
 }
+
+/* Marco oscuro: plumas de cuervo que se desprenden por arriba y caen balanceándose hasta desvanecerse. */
+.pluma { position: absolute; z-index: 3; top: -18%; left: 60%; width: 22%; pointer-events: none; opacity: 0;
+  animation: pluma-cae 5.5s ease-in-out infinite; }
+.pluma svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 0 1.5px rgb(255 255 255 / .6))
+  drop-shadow(0 0 4px rgb(170 110 255 / .8)); }
+.pluma.p2 { left: 14%; width: 17%; animation-delay: 2.75s; animation-duration: 6.2s; }
+.marco.mini .pluma { width: 26%; }
+@keyframes pluma-cae {
+  0% { opacity: 0; transform: translate(0, 0) rotate(-30deg); }
+  10% { opacity: 1; }
+  30% { transform: translate(-70%, 55%) rotate(25deg); }
+  50% { transform: translate(50%, 115%) rotate(-20deg); }
+  70% { opacity: .95; transform: translate(-60%, 175%) rotate(30deg); }
+  90%, 100% { opacity: 0; transform: translate(30%, 230%) rotate(-10deg); }
+}
+@media (prefers-reduced-motion: reduce) { .pluma { animation: none; } }

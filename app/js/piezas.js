@@ -210,13 +210,23 @@ const Piezas = (() => {
       <path class="t2" pathLength="1" d="M80 25 L20 76"/>
       <path class="t3" pathLength="1" d="M20 77 L80 73"/>
     </svg>`);
+  // Marco «oscuro»: plumas de cuervo que se desprenden y caen balanceándose.
+  const PLUMA = `<svg viewBox="0 0 20 40"><defs><linearGradient id="pluma-cuervo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7a5aa0"/><stop offset=".5" stop-color="#241e30"/><stop offset="1" stop-color="#4a3a60"/>
+    </linearGradient></defs>
+    <path d="M10 1C16.5 7 17.5 19 11.5 34L10 39 8.5 34C2.5 19 3.5 7 10 1Z" fill="url(#pluma-cuervo)" stroke="#cbb8e6"
+      stroke-width=".8"/>
+    <path d="M10 4V39M10 12 14 9M10 17 15 13M10 22 14.5 18M10 13 6 10M10 19 5.5 15M10 25 6 21" stroke="#cbb8e6"
+      stroke-width=".7" fill="none"/></svg>`;
+  const OSCURO = U.raw(`<span class="sello" lang="ja" aria-hidden="true">鴉</span>
+    <span class="pluma p1" aria-hidden="true">${PLUMA}</span><span class="pluma p2" aria-hidden="true">${PLUMA}</span>`);
   const COLORES = ['#d64545', '#2f8f5b', '#3a6fd8', '#c27c0e', '#8a4fd0', '#0f8a8a', '#d0477f', '#5b6b2f', '#7a5230'];
   function avatar(nombre, clase) {
     const marco = (Datos.V.marcos || {})[nombre];
     const dentro = avatarSolo(nombre, clase);
     // El marco oscuro lleva además un sello japonés (hanko) con 鴉, «cuervo»; el dorado, el destello que recorre el
     // anillo, una corona de oro y tres chispas.
-    const extra = marco === 'oscuro' ? html`<span class="sello" lang="ja" aria-hidden="true">鴉</span>`
+    const extra = marco === 'oscuro' ? OSCURO
       : marco === 'dorado' ? DORADO : marco === 'nika' ? NIKA : marco === 'zoro' ? html`${DORADO}${ZORO}` : '';
     const clases = marco === 'zoro' ? 'marco-dorado marco-zoro' : 'marco-' + marco;
     return marco ? html`<span class="marco ${clases} ${clase || ''}">${dentro}${extra}</span>` : dentro;
