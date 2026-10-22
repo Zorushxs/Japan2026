@@ -6,6 +6,7 @@ const Billetes = (() => {
   const V = Datos.V;
   const SOY = 'viaje:soy';
   let actual = null;
+  let yaPreguntado = false; // la ventana de «¿Quién eres?» se abre sola una vez por visita
 
   function render(root, id) {
     const b = id && Datos.billete(id);
@@ -39,9 +40,16 @@ const Billetes = (() => {
     const ordenados = yo ? [...archivos].sort((x, y) => (y.estado.nombre === yo) - (x.estado.nombre === yo)) : archivos;
     const conNombre = archivos.filter(a => a.estado.nombre).length;
     const usados = archivos.filter(a => a.estado.usado).length;
+    const grupo = V.grupo || [];
+    const asignados = new Set(archivos.map(a => a.estado.nombre).filter(Boolean));
+    const todos = archivos.length >= grupo.length && grupo.length > 0 && grupo.every(n => asignados.has(n));
     const dia = Datos.dia(b.fecha);
+    const reparto = archivos.length > 1;
+    const mio = yo && archivos.find(a => a.estado.nombre === yo);
     root.innerHTML = html`
       <a class="volver" href="#/billetes">${ICON.left}<span>Billetes</span></a>
+      ${todos ? html`<p class="todos-asignados">✓ ¡Ya tenemos todos un asiento asignado!</p>` : ''}
+      ${reparto ? cajaYo(yo, mio) : ''}
       <h1 class="h">${b.titulo}</h1>
       <p class="sub-h">${U.fmtLong(b.fecha)}${b.hora ? ' · ' + b.hora : ''}
         ${dia ? html` · <a href="#/dia/${dia.fecha}">ver el día</a>` : ''}</p>
@@ -50,10 +58,6 @@ const Billetes = (() => {
       ${archivos.length > 1 ? html`
         <div class="reparto">
           <p><b>${conNombre} de ${archivos.length}</b> con nombre · <b>${usados}</b> usados</p>
-          <div class="row">
-            <span class="hint">Soy:</span>
-            <button type="button" class="btn-ruta" data-act="soy">${yo || 'Elegir…'}</button>
-          </div>
           <p class="hint sincro">${Sincro.texto()}</p>
         </div>` : ''}
       ${archivos.length ? ordenados.map(a => archivo(b, a, yo, archivos.length > 1))
@@ -62,13 +66,36 @@ const Billetes = (() => {
     U.onActions(root, {
       abrir: el => abrir(de(el)),
       ampliar: el => ampliar(de(el)),
-      nombre: el => preguntarNombre(b, de(el)),
+      nombre: el => preguntarNombre(b, de(el), archivos),
       usado: el => {
         const a = de(el);
         Sincro.cambiar(Sincro.clave(b, a), { usado: !a.estado.usado });
       },
       soy: () => elegirSoy(),
     });
+    // Si en este móvil aún no se ha dicho quién eres, se pregunta nada más entrar.
+    if (reparto && !yo && !yaPreguntado) {
+      yaPreguntado = true;
+      setTimeout(elegirSoy, 350);
+    }
+  }
+
+  // Recuadro grande de arriba: quién eres y tu asiento (o que aún no has elegido quién eres).
+  function cajaYo(yo, mio) {
+    if (!yo) {
+      return html`<div class="yo sin-yo">
+        <p class="yo-quien">👋 ¿Quién eres?</p>
+        <p>Elige tu nombre para ver <b>tu</b> billete el primero y no coger el de otro.</p>
+        <button type="button" class="btn yo-btn" data-act="soy">Elegir mi nombre</button>
+      </div>`;
+    }
+    return html`<div class="yo ${mio ? '' : 'sin-asiento'}">
+      <p class="yo-quien">Eres <b>${yo}</b></p>
+      ${mio ? html`<p class="yo-asiento">Tu asiento: <b>${asiento(mio)}</b></p>
+          <button type="button" class="btn yo-btn" data-act="ampliar" data-i="${mio.i}">Ver mi billete</button>`
+        : html`<p class="yo-asiento">Aún no tienes asiento en este tren.</p>`}
+      <button type="button" class="yo-cambiar" data-act="soy">No soy ${yo}</button>
+    </div>`;
   }
 
   const esImagen = a => /\.(png|jpe?g|webp|gif)$/i.test(a.ruta);
@@ -102,7 +129,45 @@ const Billetes = (() => {
   }
 
   // ---------- Ventanas ----------
-  // Ventana con un campo de texto y los nombres ya usados como atajos. Devuelve el texto, '' (quitar) o null.
+  // Asiento corto de una entrada: «Coche 12 · Asiento 15-A (reserva 2158)» → «15-A».
+  const asiento = a => (/Asiento\s+(\S+)/.exec(a.nombre) || [])[1] || a.nombre.replace(/\s*\(.*\)$/, '');
+
+  // Ventana con un botón por persona del grupo. `ocupados`: { nombre: 'en 16-B' } (salen marcados). Devuelve el nombre
+  // elegido, '' (quitar) o null (cancelar).
+  function elegirPersona(titulo, actualNombre, ocupados) {
+    const grupo = V.grupo || [];
+    if (!grupo.length) return pedirNombre(titulo, actualNombre, true);
+    const dialog = document.createElement('dialog');
+    dialog.className = 'ask';
+    dialog.innerHTML = html`<form method="dialog">
+      <h2>${titulo}</h2>
+      <div class="personas">${grupo.map(n => html`<button type="button" class="persona ${ocupados[n] ? 'ocupada' : ''}"
+          data-persona="${n}" aria-pressed="${n === actualNombre}">
+          <b>${n}</b>${ocupados[n] ? html`<small>${ocupados[n]}</small>` : ''}</button>`)}</div>
+      ${Object.keys(ocupados).length ? html`<p class="hint">Si eliges a alguien que ya tiene asiento, se le cambia a este.</p>` : ''}
+      <div class="ask-btns">
+        ${actualNombre ? html`<button value="quitar" class="btn">Quitar</button>` : ''}
+        <button value="no" class="btn">Cancelar</button>
+      </div>
+    </form>`;
+    document.body.append(dialog);
+    let elegido = null;
+    dialog.querySelectorAll('[data-persona]').forEach(el => {
+      el.onclick = () => { elegido = el.dataset.persona; dialog.close('elegido'); };
+    });
+    return new Promise(resolve => {
+      dialog.addEventListener('close', () => {
+        const v = dialog.returnValue;
+        resolve(v === 'elegido' ? elegido : v === 'quitar' ? '' : null);
+        dialog.remove();
+      });
+      dialog.showModal();
+      // El foco en «Cancelar»: si no, el primer nombre parece elegido.
+      dialog.querySelector('[value="no"]').focus();
+    });
+  }
+
+  // Ventana con un campo de texto (si no hay grupo). Devuelve el texto, '' (quitar) o null.
   function pedirNombre(titulo, inicial, conQuitar) {
     const dialog = document.createElement('dialog');
     dialog.className = 'ask';
@@ -134,14 +199,22 @@ const Billetes = (() => {
     });
   }
 
-  async function preguntarNombre(b, a) {
-    const nombre = await pedirNombre(`¿De quién es ${a.nombre.replace(/\s*\(.*\)$/, '')}?`, a.estado.nombre, true);
-    if (nombre === null) return;
+  // Asigna una entrada a alguien. Si esa persona ya tenía otra entrada de este billete, se le quita de allí.
+  async function preguntarNombre(b, a, archivos) {
+    const ocupados = {};
+    archivos.forEach(otro => {
+      if (otro !== a && otro.estado.nombre) ocupados[otro.estado.nombre] = 'en ' + asiento(otro);
+    });
+    const nombre = await elegirPersona(`¿De quién es el asiento ${asiento(a)}?`, a.estado.nombre, ocupados);
+    if (nombre === null || nombre === a.estado.nombre) return;
+    archivos.forEach(otro => {
+      if (otro !== a && nombre && otro.estado.nombre === nombre) Sincro.cambiar(Sincro.clave(b, otro), { nombre: '' });
+    });
     Sincro.cambiar(Sincro.clave(b, a), { nombre });
   }
 
   async function elegirSoy() {
-    const nombre = await pedirNombre('¿Quién eres? (solo en este móvil)', soy(), true);
+    const nombre = await elegirPersona('¿Quién eres? (solo en este móvil)', soy(), {});
     if (nombre === null) return;
     ponerSoy(nombre);
     App.refresh();
@@ -171,5 +244,13 @@ const Billetes = (() => {
     }
   }
 
-  return { nav: 'billetes', render, actual: () => actual };
+  // Para las tarjetas de billete: «15-B» si en este móvil has dicho quién eres y tienes asiento en ese billete.
+  function miAsiento(b) {
+    const yo = soy();
+    if (!yo) return '';
+    const mio = Datos.archivosBillete(b).find(a => Sincro.item(Sincro.clave(b, a)).nombre === yo);
+    return mio ? asiento(mio) : '';
+  }
+
+  return { nav: 'billetes', render, actual: () => actual, miAsiento };
 })();

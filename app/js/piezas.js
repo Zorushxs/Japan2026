@@ -101,7 +101,8 @@ const Piezas = (() => {
     return html`<a class="billete ${tiene ? '' : 'falta'}" href="#/billetes/${b.id}">
       <span class="billete-ico">${ICON.ticket}</span>
       <span class="billete-txt"><b>${b.titulo}</b>
-        <small>${U.fmtShort(b.fecha)}${b.hora ? ' · ' + b.hora : ''}${reparto}</small></span>
+        <small>${U.fmtShort(b.fecha)}${b.hora ? ' · ' + b.hora : ''}${reparto}</small>
+        ${archivos.length > 1 && Billetes.miAsiento(b) ? html`<em class="mi-asiento">Tu asiento: ${Billetes.miAsiento(b)}</em>` : ''}</span>
       <span class="billete-estado">${tiene ? 'Ver' : 'Pendiente'}</span>
     </a>`;
   }
