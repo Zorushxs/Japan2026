@@ -66,6 +66,8 @@ const Billetes = (() => {
         ${dia ? html` · <a href="#/dia/${dia.fecha}">ver el día</a>` : ''}</p>
       ${b.nota ? html`<p class="billete-nota">${U.rich(b.nota)}</p>` : ''}
       ${b.guia && Datos.guia(b.guia) ? html`<div class="guias-dia">${Piezas.guia(Datos.guia(b.guia), true)}</div>` : ''}
+      ${b.drive ? html`<a class="btn drive" href="${b.drive}" target="_blank" rel="noopener">${ICON.out}
+        <span>Este billete en Drive <small>(copia de los originales, por si acaso)</small></span></a>` : ''}
       ${reparto ? html`
         <div class="reparto">
           <p><b>${conNombre} de ${archivos.length}</b> con nombre · <b>${usados}</b> ${T.usados}</p>
