@@ -791,3 +791,32 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .paso-de-quien .sello, .paso-de-quien .corona, .paso-de-quien .chispa, .paso-de-quien .nube, .paso-de-quien .sol-nika { display: none; }
 .paso-de:not([open]) { opacity: .75; }
 .paso-sin { flex: none; padding: 1px 7px; border-radius: 99px; background: var(--hover); color: var(--mute); font-size: 11px; font-weight: 700; }
+
+/* Easter egg JoJo (viernes). */
+dialog.jojo {
+  width: min(380px, calc(100vw - 32px)); padding: 26px 22px 20px; border: 0; border-radius: 22px; text-align: center;
+  color: #fff6d6; overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 0%, #6d2bbf 0%, #3a1270 55%, #1c0838 100%);
+  box-shadow: 0 0 0 3px #f2c94c, 0 20px 50px rgb(0 0 0 / .45);
+  animation: jojo-entra .45s cubic-bezier(.2, 1.4, .4, 1);
+}
+dialog.jojo::backdrop { background: rgb(20 0 40 / .6); }
+.jojo-gogo { display: flex; justify-content: center; gap: 6px; margin-bottom: 6px; }
+.jojo-gogo span {
+  font: 900 34px/1 var(--jp); color: #c58cff; text-shadow: 2px 2px 0 #1c0838, 0 0 12px #b06bff;
+  animation: jojo-gogo 1.2s ease-in-out infinite;
+}
+.jojo-gogo span:nth-child(2) { animation-delay: .15s; } .jojo-gogo span:nth-child(3) { animation-delay: .3s; }
+.jojo-gogo span:nth-child(4) { animation-delay: .45s; }
+.jojo-pre { margin: 0; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: #f2c94c; font-weight: 800; }
+dialog.jojo h2 { margin: 4px 0 0; font: 900 30px/1.05 Impact, "Arial Black", var(--sans); letter-spacing: .04em;
+  color: #f2c94c; text-shadow: 3px 3px 0 #1c0838; transform: skewX(-6deg); }
+.jojo-sub { margin: 6px 0 14px; font-size: 12.5px; opacity: .8; }
+.jojo-hora { margin: 0 0 16px; padding: 12px; border-radius: 14px; background: rgb(255 255 255 / .1); font-size: 18px; }
+.jojo-hora b { font-size: 30px; color: #fff; }
+.jojo-hora small { display: block; margin-top: 4px; font-size: 12px; opacity: .8; }
+.jojo-btn { padding: 9px 16px; border: 2px solid #f2c94c; border-radius: 6px; background: #f2c94c; color: #1c0838;
+  font: 900 15px/1 Impact, "Arial Black", var(--sans); letter-spacing: .05em; transform: skewX(-8deg); }
+@keyframes jojo-gogo { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-5px) rotate(4deg); } }
+@keyframes jojo-entra { from { transform: scale(.6) rotate(-6deg); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { dialog.jojo, .jojo-gogo span { animation: none; } }

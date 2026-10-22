@@ -140,6 +140,8 @@ const App = (() => {
       document.documentElement.classList.add('invitado');
     }
     route();
+    // Easter egg de los viernes (después de que se pinte la app y de la ventana de «¿Quién eres?», si la hay).
+    setTimeout(() => { if (!document.querySelector('dialog[open]')) Jojo.avisar(); }, 1500);
     // Lo compartido de los billetes: al arrancar y, con la pantalla de billetes abierta, cada 20 s.
     Sincro.traer();
     setInterval(() => {
