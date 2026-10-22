@@ -25,13 +25,13 @@ const Piezas = (() => {
 
   // ---------- Resumen o detalle ----------
   // «resumen»: solo los pasos con `corto`, en una línea. «detalle»: el texto entero, con las notas, los subpuntos y
-  // qué es cada sitio. Se recuerda en este navegador.
-  const MODO = 'viaje:modo';
-  function modo() {
-    try { return localStorage.getItem(MODO) === 'resumen' ? 'resumen' : 'detalle'; } catch { return 'detalle'; }
-  }
+  // qué es cada sitio.
+  // Siempre empieza en «detalle»; «resumen» dura mientras la app esté abierta (no se guarda).
+  let modoActual = 'detalle';
+  try { localStorage.removeItem('viaje:modo'); } catch {} // lo que guardaban las versiones anteriores
+  const modo = () => modoActual;
   function cambiarModo(nuevo) {
-    try { localStorage.setItem(MODO, nuevo); } catch {}
+    modoActual = nuevo === 'resumen' ? 'resumen' : 'detalle';
   }
   // «Plan» con los botones Resumen | Detalle (App los atiende con data-modo).
   const cabeceraPlan = () => html`<div class="plan-cab">

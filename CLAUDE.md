@@ -43,7 +43,7 @@ concretas, sitios, alojamientos, nombres).
 - **Día**: `fecha`, `zona`, `titulo`, `alojamiento?`, `equipaje?`, `porDefinir?`, `plan[]`, `excursiones?[]`, `mapas?`.
 - **Paso del plan**: `hora?`, `texto`, `tipo?` (`info | tiempo | aviso | importante | opcional | alternativa`, los
   colores del documento original), `lugares?[]`, `sub?[]`, `billete?`, `corto?`.
-- **Resumen | Detalle** (botón junto a «Plan», `viaje:modo` en localStorage): en resumen solo salen los pasos con
+- **Resumen | Detalle** (botón junto a «Plan»; siempre abre en detalle, el resumen no se guarda): en resumen solo salen los pasos con
   `corto` (una línea, sin subpuntos); en detalle, el texto entero y, debajo, el `info` de cada lugar (qué es).
 - **Lugar**: `nombre`, `info?` (qué es, sale en detalle), `q` (búsqueda de Google Maps), `lat`/`lon` opcionales (sin
   ellas no sale en la captura).
