@@ -99,6 +99,9 @@ const Datos = (() => {
       .map(a => ({ ...a, nombre: a.nombre || a.ruta.split('/').pop(), url: archivo(a.ruta) }));
   }
 
+  // ¿Es para esta persona? Un billete sin `para` es de todos. Sin persona (no ha dicho quién es), todo cuenta como suyo.
+  const esPara = (b, quien) => !quien || !b.para || b.para.includes(quien);
+
   // ¿Se reparte entre el grupo (un archivo por persona, con nombre y «usado»)? Sí si hay varios archivos, salvo que
   // el billete diga reparto: false (p. ej. los dos coches).
   const reparte = b => archivosBillete(b).length > 1 && b.reparto !== false;
@@ -155,7 +158,7 @@ const Datos = (() => {
     V, dias, dia, indice, excursion, lugar, existeLugar, zona, billete, guia, bloque, alojamiento, diasDe,
     duerme, despierta, estancias, rutaCoche,
     lugaresDe, mapasDia, mapasExcursion, numeros, todosLosMapas,
-    archivo, imagenMapa, archivosBillete, reparte, billetesDia,
+    archivo, imagenMapa, archivosBillete, esPara, reparte, billetesDia,
     urlLugar, urlRuta, urlComoLlegar, modo, mapaGoogle,
   };
 })();

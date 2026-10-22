@@ -720,3 +720,7 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .rv-pax { display: grid; gap: 6px; margin: 10px 0 4px; }
 .rv-p { display: flex; align-items: center; gap: 8px; font-size: 14px; }
 .rv-p code { margin-left: auto; font: 600 13px/1 ui-monospace, Consolas, monospace; color: var(--mute); }
+.billete-quien { flex: none; flex-wrap: nowrap; align-items: center; }
+.billete-quien > * { margin-left: -9px; box-shadow: 0 0 0 2px var(--panel); border-radius: 50%; }
+.billete-quien .sello, .billete-quien .chispa, .billete-quien .nube, .billete-quien .sol-nika, .billete-quien .corona { display: none; }
+.billete-quien .marco { padding: 1.5px; }

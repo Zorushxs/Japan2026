@@ -25,7 +25,8 @@ const Billetes = (() => {
       ${V.drive ? html`<a class="btn drive" href="${V.drive}" target="_blank" rel="noopener">${ICON.out}
         <span>Carpeta de Drive <small>(copia de los documentos, por si acaso)</small></span></a>` : ''}
       ${pendientes ? html`<p class="hint">${pendientes} pendientes de añadir.</p>` : ''}
-      <div class="billetes">${ordenados.map(Piezas.billete)}</div>`;
+      ${Billetes.soy() ? '' : html`<p class="hint">Di quién eres (en el calendario) para ver primero los tuyos.</p>`}
+      ${Piezas.billetesDe(ordenados)}`;
   }
 
   // ---------- Quién soy (solo en este móvil) ----------
@@ -61,6 +62,8 @@ const Billetes = (() => {
       <a class="volver" href="#/billetes">${ICON.left}<span>Billetes</span></a>
       ${todos ? html`<p class="todos-asignados">✓ ¡Ya tenemos todos un ${T.cosa} asignado!</p>` : ''}
       ${reparto ? cajaYo(yo, mio, T) : ''}
+      ${!reparto && b.para && yo && !b.para.includes(yo) ? html`<p class="no-es-tuyo">No es tu billete: es de
+        ${b.para.map(n => html`<span class="nt-p">${Piezas.avatar(n, 'mini')}${n}</span>`)}</p>` : ''}
       <h1 class="h">${b.titulo}</h1>
       <p class="sub-h">${U.fmtLong(b.fecha)}${b.hora ? ' · ' + b.hora : ''}
         ${dia ? html` · <a href="#/dia/${dia.fecha}">ver el día</a>` : ''}</p>

@@ -105,8 +105,21 @@ const Piezas = (() => {
       <span class="billete-txt"><b>${b.titulo}</b>
         <small>${U.fmtShort(b.fecha)}${b.hora ? ' · ' + b.hora : ''}${reparto}</small>
         ${Datos.reparte(b) && Billetes.miAsiento(b) ? html`<em class="mi-asiento">Tu ${Billetes.textos(b).cosa}: ${Billetes.miAsiento(b)}</em>` : ''}</span>
-      <span class="billete-estado">${tiene ? 'Ver' : 'Pendiente'}</span>
+      ${b.para ? html`<span class="billete-quien">${b.para.map(n => avatar(n, 'mini'))}</span>` : ''}
+      <span class="billete-estado">${tiene || b.tramos ? 'Ver' : 'Pendiente'}</span>
     </a>`;
+  }
+
+  // Lista de billetes: primero los tuyos; los que son solo de otros, en un desplegable (se puede abrir para revisarlos).
+  function billetesDe(lista) {
+    const yo = Billetes.soy();
+    const mios = lista.filter(b => Datos.esPara(b, yo));
+    const otros = lista.filter(b => !Datos.esPara(b, yo));
+    return html`${mios.length ? html`<div class="billetes">${mios.map(billete)}</div>` : ''}
+      ${otros.length ? html`<details class="otros otros-billetes">
+        <summary>Billetes del resto del grupo (${otros.length})</summary>
+        <div class="billetes">${otros.map(billete)}</div>
+      </details>` : ''}`;
   }
 
   // Tarjeta de una excursión (con la miniatura de su primer mapa, si la hay).
@@ -201,5 +214,5 @@ const Piezas = (() => {
   // Chip con el color de la zona.
   const zona = id => html`<span class="zona" style="--z:${Datos.zona(id).color}">${Datos.zona(id).nombre}</span>`;
 
-  return { plan, cabeceraPlan, cambiarModo, mapa, billete, excursion, zona, chipBillete, chipLugar, alojamiento, guia, avatar };
+  return { billetesDe, plan, cabeceraPlan, cambiarModo, mapa, billete, excursion, zona, chipBillete, chipLugar, alojamiento, guia, avatar };
 })();
