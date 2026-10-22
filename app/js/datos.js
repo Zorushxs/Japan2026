@@ -99,6 +99,10 @@ const Datos = (() => {
       .map(a => ({ ...a, nombre: a.nombre || a.ruta.split('/').pop(), url: archivo(a.ruta) }));
   }
 
+  // ¿Se reparte entre el grupo (un archivo por persona, con nombre y «usado»)? Sí si hay varios archivos, salvo que
+  // el billete diga reparto: false (p. ej. los dos coches).
+  const reparte = b => archivosBillete(b).length > 1 && b.reparto !== false;
+
   // Billetes de un día: los que el plan nombra y los que tienen esa fecha.
   function billetesDia(d) {
     const ids = [];
@@ -150,7 +154,7 @@ const Datos = (() => {
     V, dias, dia, indice, excursion, lugar, existeLugar, zona, billete, guia, bloque, alojamiento, diasDe,
     duerme, despierta, estancias, rutaCoche,
     lugaresDe, mapasDia, mapasExcursion, numeros, todosLosMapas,
-    archivo, imagenMapa, archivosBillete, billetesDia,
+    archivo, imagenMapa, archivosBillete, reparte, billetesDia,
     urlLugar, urlRuta, urlComoLlegar, modo, mapaGoogle,
   };
 })();

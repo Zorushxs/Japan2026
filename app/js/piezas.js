@@ -95,14 +95,14 @@ const Piezas = (() => {
     const archivos = Datos.archivosBillete(b);
     const tiene = archivos.length > 0;
     const estados = archivos.map(a => Sincro.item(Sincro.clave(b, a)));
-    const reparto = archivos.length > 1
+    const reparto = Datos.reparte(b)
       ? ` · ${estados.filter(e => e.nombre).length}/${archivos.length} con nombre · ${estados.filter(e => e.usado).length} usados`
       : '';
     return html`<a class="billete ${tiene ? '' : 'falta'}" href="#/billetes/${b.id}">
       <span class="billete-ico">${ICON.ticket}</span>
       <span class="billete-txt"><b>${b.titulo}</b>
         <small>${U.fmtShort(b.fecha)}${b.hora ? ' · ' + b.hora : ''}${reparto}</small>
-        ${archivos.length > 1 && Billetes.miAsiento(b) ? html`<em class="mi-asiento">Tu asiento: ${Billetes.miAsiento(b)}</em>` : ''}</span>
+        ${Datos.reparte(b) && Billetes.miAsiento(b) ? html`<em class="mi-asiento">Tu asiento: ${Billetes.miAsiento(b)}</em>` : ''}</span>
       <span class="billete-estado">${tiene ? 'Ver' : 'Pendiente'}</span>
     </a>`;
   }

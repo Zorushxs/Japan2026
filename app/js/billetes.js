@@ -45,7 +45,7 @@ const Billetes = (() => {
     const asignados = new Set(archivos.map(a => a.estado.nombre).filter(Boolean));
     const todos = archivos.length >= grupo.length && grupo.length > 0 && grupo.every(n => asignados.has(n));
     const dia = Datos.dia(b.fecha);
-    const reparto = archivos.length > 1;
+    const reparto = Datos.reparte(b);
     const mio = yo && archivos.find(a => a.estado.nombre === yo);
     root.innerHTML = html`
       <a class="volver" href="#/billetes">${ICON.left}<span>Billetes</span></a>
@@ -54,9 +54,9 @@ const Billetes = (() => {
       <h1 class="h">${b.titulo}</h1>
       <p class="sub-h">${U.fmtLong(b.fecha)}${b.hora ? ' · ' + b.hora : ''}
         ${dia ? html` · <a href="#/dia/${dia.fecha}">ver el día</a>` : ''}</p>
-      ${b.nota ? html`<p>${U.rich(b.nota)}</p>` : ''}
+      ${b.nota ? html`<p class="billete-nota">${U.rich(b.nota)}</p>` : ''}
       ${b.guia && Datos.guia(b.guia) ? html`<div class="guias-dia">${Piezas.guia(Datos.guia(b.guia), true)}</div>` : ''}
-      ${archivos.length > 1 ? html`
+      ${reparto ? html`
         <div class="reparto">
           <p><b>${conNombre} de ${archivos.length}</b> con nombre · <b>${usados}</b> usados</p>
           <p class="hint sincro">${Sincro.texto()}</p>
