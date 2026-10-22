@@ -80,7 +80,25 @@ async function entrar(pass, recordar) {
       await new Promise(r => setTimeout(r, 500));
       const arch = Object.keys(f.contentWindow.eval('ARCHIVOS'));
       if (!arch.some(k => k.startsWith('mapas/')) || !arch.some(k => k.startsWith('billetes/'))) throw new Error('faltan mapas o billetes');
-      out.textContent = 'OK buena: ' + appBien() + ', con mapas y billetes';
+      // Cada día y cada billete se pintan bien con una persona elegida (cada una, por turnos).
+      const w = f.contentWindow;
+      const grupo = w.eval('Datos.V.grupo');
+      const fechas = w.eval('Datos.dias.map(d => d.fecha)');
+      for (let i = 0; i < fechas.length; i++) {
+        w.localStorage.setItem('viaje:soy', grupo[i % grupo.length]);
+        w.location.hash = '#/dia/' + fechas[i];
+        await new Promise(r => setTimeout(r, 120));
+        if (!d().querySelector('.dia .plan')) throw new Error('el día ' + fechas[i] + ' sale en blanco como ' + grupo[i % grupo.length]);
+      }
+      for (const b of w.eval('Datos.V.billetes.map(b => b.id)')) {
+        w.location.hash = '#/billetes/' + b;
+        await new Promise(r => setTimeout(r, 120));
+        if (!d().querySelector('.screen h1')) throw new Error('el billete ' + b + ' sale en blanco');
+      }
+      w.localStorage.removeItem('viaje:soy');
+      w.location.hash = '#/';
+      await new Promise(r => setTimeout(r, 300));
+      out.textContent = 'OK buena: ' + appBien() + ', con mapas y billetes; ' + fechas.length + ' días con persona elegida';
     }
   } catch (e) { out.textContent = 'FALLO ' + modo + ': ' + e.message; }
   fetch('/resultado', { method: 'POST', body: out.textContent });

@@ -57,7 +57,8 @@ concretas, sitios, alojamientos, nombres).
 - **Resumen | Detalle** (botón junto a «Plan»; siempre abre en detalle, el resumen no se guarda): en resumen solo salen los pasos con
   `corto` (una línea, sin subpuntos); en detalle, el texto entero y, debajo, el `info` de cada lugar (qué es).
 - **Paso solo de algunos**: `para: [nombres]` lo pinta plegable: abierto para ellos (o si no has dicho quién eres),
-  plegado con sus avatares para los demás.
+  plegado con sus avatares para los demás. `excepto: [nombres]` al revés: plegado («Sin X ni Y») solo para esos y
+  normal para el resto. La prueba de la cerradura recorre todos los días con una persona elegida.
 - **Paso**: además, `enlaces?: [{ texto, url }]` (chips de enlace web). Los textos admiten `[texto](https://…)`.
 - **Lugar**: `nombre`, `info?` (qué es, sale en detalle), `url?` (enlace propio de Google Maps), `q` (búsqueda de Google Maps), `lat`/`lon` opcionales (sin
   ellas no sale en la captura).

@@ -790,3 +790,4 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .paso-de-quien > :first-child { margin-left: 0; }
 .paso-de-quien .sello, .paso-de-quien .corona, .paso-de-quien .chispa, .paso-de-quien .nube, .paso-de-quien .sol-nika { display: none; }
 .paso-de:not([open]) { opacity: .75; }
+.paso-sin { flex: none; padding: 1px 7px; border-radius: 99px; background: var(--hover); color: var(--mute); font-size: 11px; font-weight: 700; }

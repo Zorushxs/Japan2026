@@ -71,19 +71,25 @@ const Piezas = (() => {
         ${p.sub && !resumen ? html`<ul class="sub">${p.sub.map(s => html`<li>${rich(s)}</li>`)}</ul>` : ''}
         ${extra}
         ${resumen ? '' : infoLugares(lugares)}`;
-    // Un paso solo de algunos (`para`): plegado para los demás, abierto para ellos (o si no has dicho quién eres).
+    // Un paso solo de algunos (`para`) o de todos menos algunos (`excepto`): plegado para quien no va, abierto para
+    // quien sí (o si no has dicho quién eres).
     const yo = Billetes.soy();
-    const cuerpo = p.para
-      ? html`<details class="paso-de" ${!yo || p.para.includes(yo) ? U.raw('open') : ''}>
-          <summary><span class="paso-de-quien">${p.para.map(n => avatar(n, 'mini'))}</span>
-            <span>${rich(p.corto || p.texto)}</span></summary>
+    const parcial = p.para || p.excepto;
+    const va = !parcial || !yo || (p.para ? p.para.includes(yo) : !p.excepto.includes(yo));
+    const quien = p.para
+      ? html`<span class="paso-de-quien">${p.para.map(n => avatar(n, 'mini'))}</span>`
+      : p.excepto ? html`<small class="paso-sin">Sin ${p.excepto.join(' ni ')}</small>` : '';
+    // A quien va a un paso de «todos menos…» se le enseña normal (la etiqueta solo le sirve a quien no va).
+    const cuerpo = parcial && !(p.excepto && va)
+      ? html`<details class="paso-de" ${va ? U.raw('open') : ''}>
+          <summary>${quien}<span>${rich(p.corto || p.texto)}</span></summary>
           ${contenido}
         </details>`
       : contenido;
     return html`<li class="paso ${p.tipo ? 'nota nota-' + p.tipo : ''}">
       ${p.hora ? html`<span class="hora">${p.hora}</span>` : ''}
       <div class="cuerpo">
-        ${p.tipo && !p.para ? html`<span class="etiqueta">${ETIQUETAS[p.tipo] || p.tipo}</span>` : ''}
+        ${p.tipo && !parcial ? html`<span class="etiqueta">${ETIQUETAS[p.tipo] || p.tipo}</span>` : ''}
         ${cuerpo}
       </div>
     </li>`;
