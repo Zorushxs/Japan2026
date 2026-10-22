@@ -1,4 +1,5 @@
-// Estado compartido de los billetes (de quién es cada uno y si ya se ha usado), igual en todos los móviles.
+// Estado compartido de los billetes (de quién es cada uno y si ya se ha usado) y de quién va a cada excursión
+// (`valor`), igual en todos los móviles.
 // - Se guarda en este navegador (funciona sin conexión) y, si hay base de datos (VIAJE.sincro: Firebase Realtime
 //   Database), se envía y se recoge de allí. Gana el cambio más reciente de cada billete.
 // - Todo va cifrado con la clave de la app (la deja la cerradura en window.CLAVE_VIAJE): en la base de datos solo hay
@@ -6,9 +7,9 @@
 const Sincro = (() => {
   const LOCAL = 'viaje:estado';
   const cfg = Datos.V.sincro || {};
-  let estado = cargar(); // { items: { clave: { nombre, usado, t, pendiente } }, ultima }
+  let estado = cargar(); // { items: { clave: { nombre, usado, valor?, t, pendiente } }, ultima }
   let enviando = false, trayendo = false, error = null;
-  let alCambiar = null;
+  const oyentes = {}; // pantalla → función que repinta
 
   function cargar() {
     try { return JSON.parse(localStorage.getItem(LOCAL)) || { items: {} }; } catch { return { items: {} }; }
@@ -16,7 +17,7 @@ const Sincro = (() => {
   function guardar() {
     try { localStorage.setItem(LOCAL, JSON.stringify(estado)); } catch {}
   }
-  const avisar = () => { if (alCambiar) alCambiar(); };
+  const avisar = () => Object.values(oyentes).forEach(fn => fn());
 
   // Clave de un archivo de billete: «<id del billete>|<ruta del archivo>».
   const clave = (billete, archivo) => `${billete.id}|${archivo.ruta}`;
@@ -62,7 +63,7 @@ const Sincro = (() => {
     try {
       const cuerpo = {};
       for (const [k, v] of pendientes) {
-        cuerpo[await resumen(k)] = { c: await cifrar({ k, nombre: v.nombre, usado: v.usado }), t: v.t };
+        cuerpo[await resumen(k)] = { c: await cifrar({ k, nombre: v.nombre, usado: v.usado, valor: v.valor }), t: v.t };
       }
       const r = await fetch(base() + '.json', { method: 'PATCH', body: JSON.stringify(cuerpo) });
       if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -91,7 +92,7 @@ const Sincro = (() => {
           const v = await descifrar(valor.c);
           const local = estado.items[v.k];
           if (!local || valor.t > local.t) {
-            estado.items[v.k] = { nombre: v.nombre || '', usado: Boolean(v.usado), t: valor.t };
+            estado.items[v.k] = { nombre: v.nombre || '', usado: Boolean(v.usado), valor: v.valor, t: valor.t };
           }
         } catch {}
       }
@@ -162,6 +163,6 @@ const Sincro = (() => {
   return {
     clave, item, nombres, cambiar, traer, texto, activo,
     listarSubidas, subir, borrarSubida, subidasGuardadas,
-    onCambio: fn => { alCambiar = fn; },
+    onCambio: (fn, pantalla = 'billetes') => { oyentes[pantalla] = fn; },
   };
 })();

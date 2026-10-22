@@ -310,6 +310,44 @@ iframe.mapa-google {
 .exc-titulo { font-size: 17px; }
 .exc-txt > small { color: var(--mute); font-size: 14px; }
 
+/* ¿Quién va? Una fila por excursión con las 9 caras: va (aro verde y ✓), quizá (?) o no va (gris y apagada). */
+.qv { display: grid; gap: 8px; margin-top: 12px; }
+.qv-fila { padding: 10px 8px 6px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
+.qv-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 0 4px 6px; }
+.qv-cab a, .qv-cab b { font-weight: 700; color: var(--ink); text-decoration: none; }
+.qv-cab small { flex: none; color: var(--mute); font-size: 12.5px; font-weight: 600; }
+.qv-caras { display: grid; grid-template-columns: repeat(9, 1fr); gap: 2px; }
+.qv-p {
+  display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; padding: 3px 0 2px;
+  border: 0; border-radius: 10px; background: none; color: var(--ink); font: 600 9.5px/1.2 var(--sans); cursor: pointer;
+}
+.qv-p:not(:disabled):active { background: var(--hover); }
+.qv-p:disabled { cursor: default; }
+.qv-av { position: relative; display: block; width: 30px; height: 30px; }
+.qv-av > .avatar, .qv-av > .marco { width: 100%; height: 100%; font-size: 13px; }
+.qv-av .marco { padding: 2px; }
+.qv-av .marco > .avatar { width: 100%; height: 100%; }
+.qv-av .sello, .qv-av .chispa, .qv-av .pluma { display: none; }
+.qv-nom { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qv-marca {
+  position: absolute; right: -4px; bottom: -3px; z-index: 3; display: grid; place-items: center; width: 15px; height: 15px;
+  border-radius: 50%; border: 2px solid var(--panel); color: #fff; font: 800 9px/1 var(--sans);
+}
+.qv-si .qv-av { border-radius: 50%; box-shadow: 0 0 0 2px var(--tiempo); }
+.qv-si .qv-marca { background: var(--tiempo); }
+.qv-si .qv-marca::after { content: '✓'; }
+.qv-quizas .qv-av > * { opacity: .7; }
+.qv-quizas .qv-marca { background: var(--opcional); }
+.qv-quizas .qv-marca::after { content: '?'; }
+.qv-quizas .qv-nom { color: var(--opcional); }
+.qv-no .qv-av { opacity: .3; filter: grayscale(1); }
+.qv-no .qv-marca { display: none; }
+.qv-no .qv-nom { color: var(--mute); font-weight: 500; }
+.qv-yo .qv-nom { text-decoration: underline 2px var(--accent); text-underline-offset: 2px; }
+.qv + .sincro { margin-top: 6px; font-size: 12.5px; }
+@media (min-width: 400px) { .qv-p { font-size: 10.5px; } }
+@media (min-width: 560px) { .qv-av { width: 40px; height: 40px; } .qv-p { font-size: 12px; } }
+
 /* ---------- Notas del plan ---------- */
 .consejos { padding-left: 20px; }
 .consejos li { margin: 8px 0; }

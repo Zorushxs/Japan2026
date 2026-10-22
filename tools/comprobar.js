@@ -34,6 +34,12 @@ function comprobar() {
   });
   if (V.dias.length && V.dias[V.dias.length - 1].fecha !== V.fin) errores.push(`El último día no es ${V.fin}`);
 
+  (V.quienVa || []).forEach(f => {
+    if (!Datos.excursion(f.id) && !f.titulo) errores.push(`quienVa: «${f.id}» no es una excursión y no tiene titulo`);
+    [...(f.si || []), ...(f.quizas || [])].forEach(n => {
+      if (!(V.grupo || []).includes(n)) errores.push(`quienVa ${f.id}: «${n}» no está en el grupo`);
+    });
+  });
   Object.entries(V.alojamientos || {}).forEach(([clave, a]) => {
     if (a.guia && !Datos.guia(a.guia)) errores.push(`Alojamiento ${clave}: no existe la guía «${a.guia}»`);
   });

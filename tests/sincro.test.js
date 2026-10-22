@@ -90,6 +90,13 @@ server.listen(0, '127.0.0.1', async () => {
   await B.Sincro.traer();
   ok(A.Sincro.item(k1).nombre === 'Marc' && B.Sincro.item(k1).nombre === 'Marc', 'si los dos cambian lo mismo, gana el último');
 
+  // 4b. Quién va a una excursión (valor): lo que pone uno lo ve el otro, sin tocar los nombres.
+  A.Sincro.cambiar('va|prueba|Ramon', { valor: 'quizas' });
+  await espera(PAUSA);
+  await B.Sincro.traer();
+  ok(B.Sincro.item('va|prueba|Ramon').valor === 'quizas' && !B.Sincro.nombres().includes(''),
+    'el «quién va» de un móvil lo ve el otro');
+
   // 5. Sin conexión: el cambio se queda pendiente y se envía al volver.
   const C = movil('http://127.0.0.1:1', clave);
   C.Sincro.cambiar(k2, { nombre: 'Laia' });

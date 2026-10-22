@@ -93,6 +93,10 @@ concretas, sitios, alojamientos, nombres).
 - Cada entrada va **cifrada con la clave de la app** (AES-GCM, IV aleatorio) y su nombre en la base de datos es un hash
   de `sala|billete|archivo`: allí no hay nada legible. La cerradura deja la clave en `window.CLAVE_VIAJE` (por eso la
   deriva con `encrypt` y `decrypt`). Gana el cambio más reciente de cada entrada.
+- **¿Quién va?** (en Excursiones y en cada excursión): `VIAJE.quienVa = [{ id, si: [nombres], quizas?: [nombres] }]`
+  (id de una excursión; si no lo es, `titulo` y `emoji` propios) es el punto de partida. Al tocar una cara pasa de va →
+  quizá → no va y se guarda en Sincro con la clave `va|<id>|<nombre>` y el campo `valor`; lo tocado manda sobre los datos.
+  Cada uno solo puede tocar su cara (según «Soy: …»); los de `VIAJE.admins`, las de todos.
 - «Soy: …» (`viaje:soy`) es solo de cada móvil: pone tu billete el primero y marcado.
 - `VIAJE.grupo` (los nombres de los botones) y `VIAJE.avatares` (`{ nombre: 'avatares/x.webp' }`, fotos redondas en
   `privado/avatares/`, 256 px) y `VIAJE.marcos` (`{ nombre: 'dorado' | 'oscuro' | 'nika' | 'zoro' }`; nika = Gear 5: nubes, sol de Nika y rebote de goma; zoro = el dorado más tres tajos de katana que dibujan una Z;: anillo de oro con bisel, destello que lo recorre, corona SVG y chispas; o de humo con pluma, sello 鴉 y plumas de cuervo que caen); sin foto,

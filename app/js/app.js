@@ -149,10 +149,10 @@ const App = (() => {
     route();
     // Easter egg de los viernes (después de que se pinte la app y de la ventana de «¿Quién eres?», si la hay).
     setTimeout(() => { if (!document.querySelector('dialog[open]')) Jojo.avisar(); }, 1500);
-    // Lo compartido de los billetes: al arrancar y, con la pantalla de billetes abierta, cada 20 s.
+    // Lo compartido (billetes y quién va a cada excursión): al arrancar y, con esas pantallas abiertas, cada 20 s.
     Sincro.traer();
     setInterval(() => {
-      if (current === Billetes && document.visibilityState === 'visible') Sincro.traer();
+      if ((current === Billetes || current === Excursiones) && document.visibilityState === 'visible') Sincro.traer();
     }, 20000);
   }
 
