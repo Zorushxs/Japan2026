@@ -7,6 +7,7 @@ const Billetes = (() => {
   const SOY = 'viaje:soy';
   let actual = null;
   let yaPreguntado = false; // la ventana de «¿Quién eres?» se abre sola una vez por visita
+  let otrosAbierto = false;  // el desplegable con los billetes del resto (se mantiene al repintar)
 
   function render(root, id) {
     const b = id && Datos.billete(id);
@@ -60,8 +61,15 @@ const Billetes = (() => {
           <p><b>${conNombre} de ${archivos.length}</b> con nombre · <b>${usados}</b> usados</p>
           <p class="hint sincro">${Sincro.texto()}</p>
         </div>` : ''}
-      ${archivos.length ? ordenados.map(a => archivo(b, a, yo, archivos.length > 1))
-        : html`<p class="vacio">Aún no está el billete.</p>`}`;
+      ${!archivos.length ? html`<p class="vacio">Aún no está el billete.</p>`
+        : mio && reparto ? html`${archivo(b, mio, yo, true)}
+          <details class="otros" ${otrosAbierto ? 'open' : ''}>
+            <summary>Billetes del resto (${archivos.length - 1})</summary>
+            ${archivos.filter(a => a !== mio).map(a => archivo(b, a, yo, true))}
+          </details>`
+        : ordenados.map(a => archivo(b, a, yo, reparto))}`;
+    const otros = root.querySelector('details.otros');
+    if (otros) otros.addEventListener('toggle', () => { otrosAbierto = otros.open; });
     const de = el => archivos[Number(el.dataset.i)];
     U.onActions(root, {
       abrir: el => abrir(de(el)),

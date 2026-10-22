@@ -441,3 +441,13 @@ dialog.ask .chips { margin: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .yo.sin-yo { animation: none; } }
 .mi-asiento { display: block; font-style: normal; font-weight: 700; color: var(--accent); font-size: 13.5px; }
+
+/* Billetes del resto, plegados debajo del tuyo. */
+details.otros { margin: 4px 0 18px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
+details.otros > summary {
+  padding: 14px 16px; font-weight: 700; cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px;
+}
+details.otros > summary::-webkit-details-marker { display: none; }
+details.otros > summary::before { content: "▸"; transition: transform .15s; }
+details.otros[open] > summary::before { transform: rotate(90deg); }
+details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18px; }
