@@ -10,12 +10,15 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <title>Viaje</title>
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
-<meta name="theme-color" content="#f6f3ee">
+<meta name="theme-color" content="#fbf6ec">
 <script>
   try { const th = localStorage.getItem('viaje:tema'); if (th) document.documentElement.dataset.theme = th; } catch {}
+  // Paleta de colores (la elige cada móvil; por defecto, Rojo Mugiwara).
+  document.documentElement.dataset.paleta = 'mugiwara';
+  try { const pa = localStorage.getItem('viaje:paleta'); if (pa) document.documentElement.dataset.paleta = pa; } catch {}
 </script>
 <style>
   :root { --bg: #f6f3ee; --panel: #fffdf9; --ink: #1f1c19; --mute: #71695f; --line: #e5ded3; --accent: #b3402a; --err: #b3352f; }
@@ -23,6 +26,21 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) { --bg: #141312; --panel: #1d1b19; --ink: #ece6dc; --mute: #a0978b; --line: #312d29; --accent: #f08a6c; --err: #ff8a7a; }
   }
+:root[data-paleta="mugiwara"] { --bg: #fbf6ec; --panel: #ffffff; --ink: #1c1917; --mute: #6f665c; --line: #ebe1cf; --accent: #d62828; }
+  :root[data-paleta="mugiwara"][data-theme="dark"] { --bg: #15110f; --panel: #201a17; --ink: #f3ece2; --mute: #a89b8c; --line: #382d27; --accent: #ff5a4e; }
+  @media (prefers-color-scheme: dark) { :root[data-paleta="mugiwara"]:not([data-theme="light"]) { --bg: #15110f; --panel: #201a17; --ink: #f3ece2; --mute: #a89b8c; --line: #382d27; --accent: #ff5a4e; } }
+  :root[data-paleta="aizome"] { --bg: #f4f5f8; --panel: #ffffff; --ink: #161a24; --mute: #5f6677; --line: #dfe3ec; --accent: #2b4c9b; }
+  :root[data-paleta="aizome"][data-theme="dark"] { --bg: #0f1219; --panel: #171c27; --ink: #e7eaf2; --mute: #9aa2b5; --line: #283043; --accent: #7ea2ff; }
+  @media (prefers-color-scheme: dark) { :root[data-paleta="aizome"]:not([data-theme="light"]) { --bg: #0f1219; --panel: #171c27; --ink: #e7eaf2; --mute: #9aa2b5; --line: #283043; --accent: #7ea2ff; } }
+  :root[data-paleta="sakura"] { --bg: #fbf5f6; --panel: #ffffff; --ink: #211a1d; --mute: #776a70; --line: #efdfe4; --accent: #c8457a; }
+  :root[data-paleta="sakura"][data-theme="dark"] { --bg: #161114; --panel: #21191d; --ink: #f4e9ee; --mute: #a9969f; --line: #3a2a31; --accent: #ff86b5; }
+  @media (prefers-color-scheme: dark) { :root[data-paleta="sakura"]:not([data-theme="light"]) { --bg: #161114; --panel: #21191d; --ink: #f4e9ee; --mute: #a9969f; --line: #3a2a31; --accent: #ff86b5; } }
+  :root[data-paleta="matcha"] { --bg: #f5f6ef; --panel: #fdfdf8; --ink: #1b1e17; --mute: #666b5c; --line: #e1e4d4; --accent: #4a7a2c; }
+  :root[data-paleta="matcha"][data-theme="dark"] { --bg: #11140f; --panel: #1a1e16; --ink: #e9eddf; --mute: #9aa18c; --line: #2c3324; --accent: #9bcf6a; }
+  @media (prefers-color-scheme: dark) { :root[data-paleta="matcha"]:not([data-theme="light"]) { --bg: #11140f; --panel: #1a1e16; --ink: #e9eddf; --mute: #9aa18c; --line: #2c3324; --accent: #9bcf6a; } }
+  :root[data-paleta="neon"] { --bg: #f5f3fa; --panel: #ffffff; --ink: #17141f; --mute: #655f75; --line: #e2ddef; --accent: #7b2ff7; }
+  :root[data-paleta="neon"][data-theme="dark"] { --bg: #0b0a12; --panel: #15131f; --ink: #ece9f7; --mute: #9a95b0; --line: #29243b; --accent: #ff3d9a; }
+  @media (prefers-color-scheme: dark) { :root[data-paleta="neon"]:not([data-theme="light"]) { --bg: #0b0a12; --panel: #15131f; --ink: #ece9f7; --mute: #9a95b0; --line: #29243b; --accent: #ff3d9a; } }
   * { box-sizing: border-box; }
   body {
     margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 16px;
@@ -32,10 +50,7 @@
     width: 100%; max-width: 360px; padding: 28px 22px; border-radius: 18px; background: var(--panel);
     border: 1px solid var(--line); display: grid; gap: 14px; text-align: center;
   }
-  .k {
-    justify-self: center; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px;
-    background: var(--accent); color: var(--bg); font: 500 28px/1 "Hiragino Sans", "Yu Gothic UI", Meiryo, sans-serif;
-  }
+  .k { justify-self: center; width: 72px; height: 72px; border-radius: 18px; box-shadow: 0 4px 14px rgb(0 0 0 / .18); }
   h1 { margin: 0; font: 700 22px/1.2 Georgia, serif; }
   input {
     width: 100%; padding: 12px 14px; border-radius: 11px; border: 1px solid var(--line); background: var(--bg);
@@ -56,7 +71,7 @@
 </head>
 <body>
 <form id="cerradura" autocomplete="off">
-  <span class="k" aria-hidden="true">旅</span>
+  <img class="k" src="assets/logo.png" alt="">
   <h1>Viaje privado</h1>
   <input id="pass" type="password" placeholder="Contraseña" aria-label="Contraseña" autocomplete="current-password" required>
   <button type="button" id="recordar" aria-pressed="false">Recordar en este dispositivo</button>

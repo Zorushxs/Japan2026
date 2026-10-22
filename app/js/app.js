@@ -79,6 +79,46 @@ const App = (() => {
     try { localStorage.setItem(THEME_KEY, theme); } catch {}
   }
 
+  // ---------- Paleta ----------
+  // Las paletas están en css/styles.css (:root[data-paleta=…]); aquí, su nombre y los colores de muestra.
+  const PALETAS = {
+    mugiwara: {"nombre": "Rojo Mugiwara", "claro": "#d62828", "oscuro": "#ff5a4e", "fondo": "#fbf6ec", "fondoOscuro": "#15110f"},
+    aizome: {"nombre": "Índigo aizome", "claro": "#2b4c9b", "oscuro": "#7ea2ff", "fondo": "#f4f5f8", "fondoOscuro": "#0f1219"},
+    sakura: {"nombre": "Sakura", "claro": "#c8457a", "oscuro": "#ff86b5", "fondo": "#fbf5f6", "fondoOscuro": "#161114"},
+    matcha: {"nombre": "Matcha", "claro": "#4a7a2c", "oscuro": "#9bcf6a", "fondo": "#f5f6ef", "fondoOscuro": "#11140f"},
+    neon: {"nombre": "Neón Tokio", "claro": "#7b2ff7", "oscuro": "#ff3d9a", "fondo": "#f5f3fa", "fondoOscuro": "#0b0a12"},
+  };
+  function elegirPaleta() {
+    const actual = document.documentElement.dataset.paleta;
+    const dialog = document.createElement('dialog');
+    dialog.className = 'ask';
+    dialog.innerHTML = U.html`<form method="dialog">
+      <h2>Colores de la app</h2>
+      <div class="paletas">${Object.entries(PALETAS).map(([id, p]) => U.html`
+        <button type="button" class="paleta" data-paleta="${id}" aria-pressed="${id === actual}">
+          <span class="muestras"><i style="background:${p.fondo}"></i><i style="background:${p.claro}"></i>
+            <i style="background:${p.fondoOscuro}"></i><i style="background:${p.oscuro}"></i></span>
+          <span>${p.nombre}</span>
+        </button>`)}</div>
+      <p class="hint">Solo en este móvil. Claro u oscuro, con el botón de al lado.</p>
+      <div class="ask-btns"><button value="no" class="btn">Cerrar</button></div>
+    </form>`;
+    dialog.querySelectorAll('[data-paleta]').forEach(el => {
+      el.onclick = () => {
+        document.documentElement.dataset.paleta = el.dataset.paleta;
+        try { localStorage.setItem('viaje:paleta', el.dataset.paleta); } catch {}
+        dialog.querySelectorAll('[data-paleta]').forEach(b => b.setAttribute('aria-pressed', b === el));
+        colorBarra();
+      };
+    });
+    U.modal(dialog);
+  }
+  // Color de la barra del navegador en el móvil: el fondo de la paleta.
+  function colorBarra() {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+  }
+
   // ---------- Bloqueo ----------
   // Solo en la página cifrada (la cerradura pone window.CERRADURA): olvida la clave guardada y vuelve a pedirla.
   function lock() {
@@ -87,7 +127,9 @@ const App = (() => {
   }
 
   function start() {
-    $('#themeBtn').onclick = toggleTheme;
+    $('#themeBtn').onclick = () => { toggleTheme(); colorBarra(); };
+    $('#paletaBtn').onclick = elegirPaleta;
+    colorBarra();
     $('#lockBtn').hidden = !window.CERRADURA;
     $('#lockBtn').onclick = lock;
     route();

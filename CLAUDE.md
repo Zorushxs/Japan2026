@@ -22,7 +22,9 @@ concretas, sitios, alojamientos, nombres).
 
 ## Tecnología y convenciones
 
-- HTML, CSS y JS sin dependencias, mobile-first, tema claro/oscuro. Textos de la interfaz en castellano; comentarios del
+- HTML, CSS y JS sin dependencias, mobile-first, tema claro/oscuro y 5 paletas (`data-paleta` en `<html>`: mugiwara
+  —por defecto—, aizome, sakura, matcha, neon; `viaje:paleta`; CSS al final de styles.css y en la cerradura).
+  Logo: `assets/logo.png`, `favicon.png`, `icon-*.png` (app/index.html los pide con `../assets/`; build.js lo arregla). Textos de la interfaz en castellano; comentarios del
   código en castellano.
 - Scripts clásicos con un IIFE que expone un objeto global: `U` (util), `Datos`, `Piezas`, `Calendario`, `Dia`,
   `Excursiones`, `Billetes`, `Info`, `Mapa`, `Guia`, `Alojamientos`, `App`. El orden de carga es el de [app/index.html](app/index.html).

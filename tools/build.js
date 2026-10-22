@@ -58,6 +58,8 @@ function juntar() {
     `<style>\n${fs.readFileSync(path.join(APP, href), 'utf8')}</style>`);
   html = html.replace(/<script src="([^"]+)"><\/script>/g, (_, src) =>
     `<script>\n${seguro(fs.readFileSync(path.join(APP, src), 'utf8'))}</script>`);
+  // Rutas de app/index.html (../assets/…) a las de la página publicada, que está en la raíz (assets/…).
+  html = html.replace(/(["'(])\.\.\/(assets\/|manifest\.webmanifest)/g, '$1$2');
   const lista = archivos();
   html = html.replace('<!--ARCHIVOS-->', () => `<script>const ARCHIVOS = ${JSON.stringify(lista)};</script>`);
   return { html, lista };
