@@ -731,3 +731,6 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .billete.ajeno .billete-ico { opacity: .6; }
 .billete.ajeno:hover { opacity: .9; }
 .de-otros { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--mute); }
+
+/* Invitado: 5 pestañas en vez de 6. */
+.invitado .nav { grid-template-columns: repeat(5, 1fr); }

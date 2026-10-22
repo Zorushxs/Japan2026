@@ -119,9 +119,16 @@
       base, { name: 'AES-GCM', length: 256 }, exportable, ['encrypt', 'decrypt']);
   }
 
+  // Hay una copia cifrada por contraseña (la completa y, si la hay, la de invitado): se prueba la clave con cada una.
+  const cajas = datos.cajas || [{ iv: datos.iv, datos: datos.datos }];
   async function descifrar(clave) {
-    const plano = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes(datos.iv) }, clave, bytes(datos.datos));
-    return new TextDecoder().decode(plano);
+    for (const caja of cajas) {
+      try {
+        const plano = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes(caja.iv) }, clave, bytes(caja.datos));
+        return new TextDecoder().decode(plano);
+      } catch {}
+    }
+    throw new DOMException('Contraseña incorrecta', 'OperationError');
   }
 
   // Sustituye esta página por la app descifrada (en la misma ventana: el enlace con #/dia/... se mantiene).
@@ -132,6 +139,16 @@
     : new Promise(resolve => addEventListener('load', resolve, { once: true })));
 
   // La clave se deja en window.CLAVE_VIAJE: la app la usa para cifrar lo que comparte (js/sincro.js).
+  // Los archivos comunes (mapas, guías, avatares) van aparte, una sola vez: se descifran con la clave interna que trae
+  // la copia de la app (marca <!--KC:…-->) y se dejan en window.__COMUNES__, que la app une a sus ARCHIVOS.
+  async function comunes(html) {
+    const m = /<!--KC:([A-Za-z0-9+/=]+)-->/.exec(html);
+    if (!m || !datos.comun) return;
+    const k = await crypto.subtle.importKey('raw', bytes(m[1]), 'AES-GCM', false, ['decrypt']);
+    const plano = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes(datos.comun.iv) }, k, bytes(datos.comun.datos));
+    window.__COMUNES__ = JSON.parse(new TextDecoder().decode(plano));
+  }
+
   async function mostrar(html, clave) {
     // La app solo se puede escribir una vez por ventana (su código declara constantes globales). Si ya se escribió,
     // se recarga de cero; con «Recordar» se abrirá sola.
@@ -140,6 +157,7 @@
       location.reload();
       return;
     }
+    await comunes(html);
     window.CERRADURA = true;
     window.CLAVE_VIAJE = clave;
     document.open();

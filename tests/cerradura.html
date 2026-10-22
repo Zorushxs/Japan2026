@@ -3,6 +3,7 @@
      buena    → la contraseña buena abre la app (una sola, sin restos de la cerradura)
      mala     → una contraseña errónea no entra
      recordar → con «Recordar», al recargar se abre sola y bien
+     invitado → la contraseña de invitado abre la app sin billetes, sin Drive y sin base de datos
      Envía el resultado a /resultado. -->
 <html><head><meta charset="utf-8"></head><body>
 <pre id="out">ESPERANDO</pre>
@@ -56,11 +57,30 @@ async function entrar(pass, recordar) {
       await new Promise(r => setTimeout(r, 1500));
       out.textContent = 'OK recordar: al recargar se abre sola, ' + appBien();
       try { localStorage.removeItem('viaje:clave'); } catch {}
+    } else if (modo === 'invitado') {
+      await entrar(q.get('pass'));
+      await wait(() => d().querySelector('.mes'), 20000);
+      await new Promise(r => setTimeout(r, 500));
+      const tieneBilletes = !!d().querySelector('[data-nav="billetes"]');
+      const texto = d().documentElement.innerHTML;
+      const fuga = /drive\.google\.com|firebasedatabase|data:image\/png/.test(texto) || false
+        ? null : Object.keys(f.contentWindow.eval('ARCHIVOS')).filter(k => k.startsWith('billetes/'));
+      if (tieneBilletes) throw new Error('el invitado ve la pestaña de billetes');
+      if (/drive\.google\.com|firebasedatabase/.test(texto)) throw new Error('el invitado tiene enlaces de Drive o de la base de datos');
+      if (f.contentWindow.eval('Datos.V.billetes').length) throw new Error('el invitado tiene billetes en los datos');
+      if (!Object.keys(f.contentWindow.eval('ARCHIVOS')).some(k => k.startsWith('mapas/'))) throw new Error('el invitado no tiene mapas');
+      if (fuga && fuga.length) throw new Error('el invitado tiene archivos de billetes');
+      f.contentWindow.location.hash = '#/billetes/pase-west';
+      await new Promise(r => setTimeout(r, 400));
+      if (d().querySelector('.billete-caja, .reparto')) throw new Error('el invitado puede abrir un billete');
+      out.textContent = 'OK invitado: ' + appBien() + ', sin billetes ni Drive';
     } else {
       await entrar(q.get('pass'));
       await wait(() => d().querySelector('.mes'), 20000);
       await new Promise(r => setTimeout(r, 500));
-      out.textContent = 'OK buena: ' + appBien();
+      const arch = Object.keys(f.contentWindow.eval('ARCHIVOS'));
+      if (!arch.some(k => k.startsWith('mapas/')) || !arch.some(k => k.startsWith('billetes/'))) throw new Error('faltan mapas o billetes');
+      out.textContent = 'OK buena: ' + appBien() + ', con mapas y billetes';
     }
   } catch (e) { out.textContent = 'FALLO ' + modo + ': ' + e.message; }
   fetch('/resultado', { method: 'POST', body: out.textContent });

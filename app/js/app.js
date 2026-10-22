@@ -20,6 +20,7 @@ const App = (() => {
       d.close();
     });
     current = ROUTES[name] || Calendario;
+    if (Datos.V.invitado && current === Billetes) current = Calendario;
     const root = document.createElement('div');
     root.className = 'screen';
     $('#view').replaceChildren(root);
@@ -132,6 +133,12 @@ const App = (() => {
     colorBarra();
     $('#lockBtn').hidden = !window.CERRADURA;
     $('#lockBtn').onclick = lock;
+    // Invitado: sin billetes (ni la pestaña).
+    if (Datos.V.invitado) {
+      const pestaña = document.querySelector('[data-nav="billetes"]');
+      if (pestaña) pestaña.remove();
+      document.documentElement.classList.add('invitado');
+    }
     route();
     // Lo compartido de los billetes: al arrancar y, con la pantalla de billetes abierta, cada 20 s.
     Sincro.traer();

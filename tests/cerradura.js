@@ -51,6 +51,9 @@ server.listen(0, '127.0.0.1', async () => {
   const pass = 'pass=' + encodeURIComponent(PASS);
   const resultados = [];
   for (const modo of ['buena', 'mala', 'recordar']) resultados.push(await probar(`modo=${modo}&${pass}`));
+  const inv = path.join(ROOT, 'privado', 'contraseña-invitado.txt');
+  const passInv = process.env.VIAJE_PASS_INVITADO || (fs.existsSync(inv) ? fs.readFileSync(inv, 'utf8').trim() : '');
+  if (passInv) resultados.push(await probar('modo=invitado&pass=' + encodeURIComponent(passInv)));
   resultados.forEach(r => console.log(r));
   server.close();
   process.exit(resultados.every(r => r.startsWith('OK')) ? 0 : 1);
