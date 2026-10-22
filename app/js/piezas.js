@@ -147,12 +147,31 @@ const Piezas = (() => {
 
   // Avatar de una persona: su foto (VIAJE.avatares) o su inicial en un círculo de color. Cada persona del grupo tiene
   // un color distinto (por su orden en VIAJE.grupo); alguien de fuera, uno que sale de su nombre.
+  const ESTRELLA = '<svg viewBox="0 0 10 10"><path d="M5 0L6 4L10 5L6 6L5 10L4 6L0 5L4 4Z"/></svg>';
+  const DORADO = U.raw(`<span class="destello" aria-hidden="true"></span>
+    <svg class="corona" viewBox="0 0 24 17" aria-hidden="true">
+      <defs><linearGradient id="oro-corona" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff6c8"/><stop offset=".45" stop-color="#f1c84b"/><stop offset="1" stop-color="#9b6a14"/>
+      </linearGradient></defs>
+      <path d="M2.2 13.2L1 4.2l6 4.2L12 1.2l5 7.2 6-4.2-1.2 9z" fill="url(#oro-corona)" stroke="#6e4a0c" stroke-width=".7"
+        stroke-linejoin="round"/>
+      <rect x="2" y="12.6" width="20" height="3.2" rx="1" fill="url(#oro-corona)" stroke="#6e4a0c" stroke-width=".7"/>
+      <circle cx="12" cy="9.6" r="1.7" fill="#d4213a" stroke="#6b0f1d" stroke-width=".5"/>
+      <circle cx="6.6" cy="10.6" r="1" fill="#2d6fd6"/><circle cx="17.4" cy="10.6" r="1" fill="#2d6fd6"/>
+      <circle cx="1" cy="4.2" r="1" fill="#fff6c8"/><circle cx="12" cy="1.2" r="1.1" fill="#fff6c8"/>
+      <circle cx="23" cy="4.2" r="1" fill="#fff6c8"/>
+    </svg>
+    <span class="chispa c1" aria-hidden="true">${ESTRELLA}</span>
+    <span class="chispa c2" aria-hidden="true">${ESTRELLA}</span>
+    <span class="chispa c3" aria-hidden="true">${ESTRELLA}</span>`);
   const COLORES = ['#d64545', '#2f8f5b', '#3a6fd8', '#c27c0e', '#8a4fd0', '#0f8a8a', '#d0477f', '#5b6b2f', '#7a5230'];
   function avatar(nombre, clase) {
     const marco = (Datos.V.marcos || {})[nombre];
     const dentro = avatarSolo(nombre, clase);
-    // El marco oscuro lleva además un sello japonés (hanko) con 鴉, «cuervo».
-    const extra = marco === 'oscuro' ? html`<span class="sello" lang="ja" aria-hidden="true">鴉</span>` : '';
+    // El marco oscuro lleva además un sello japonés (hanko) con 鴉, «cuervo»; el dorado, el destello que recorre el
+    // anillo, una corona de oro y tres chispas.
+    const extra = marco === 'oscuro' ? html`<span class="sello" lang="ja" aria-hidden="true">鴉</span>`
+      : marco === 'dorado' ? DORADO : '';
     return marco ? html`<span class="marco marco-${marco} ${clase || ''}">${dentro}${extra}</span>` : dentro;
   }
   function avatarSolo(nombre, clase) {

@@ -70,7 +70,7 @@ concretas, sitios, alojamientos, nombres).
   deriva con `encrypt` y `decrypt`). Gana el cambio más reciente de cada entrada.
 - «Soy: …» (`viaje:soy`) es solo de cada móvil: pone tu billete el primero y marcado.
 - `VIAJE.grupo` (los nombres de los botones) y `VIAJE.avatares` (`{ nombre: 'avatares/x.webp' }`, fotos redondas en
-  `privado/avatares/`, 256 px) y `VIAJE.marcos` (`{ nombre: 'dorado' | 'oscuro' }`: anillo dorado con corona, o de humo con pluma y sello 鴉); sin foto,
+  `privado/avatares/`, 256 px) y `VIAJE.marcos` (`{ nombre: 'dorado' | 'oscuro' }`: anillo de oro con bisel, destello que lo recorre, corona SVG y chispas; o de humo con pluma y sello 鴉); sin foto,
   inicial en un círculo con un color fijo por posición en el grupo
   (`Piezas.avatar`).
 - Reglas de Firebase: lectura y escritura solo en `viaje/$sala` (la raíz cerrada) y validación de `{ c, t }`.

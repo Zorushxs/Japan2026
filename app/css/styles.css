@@ -466,30 +466,65 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .grande-quien { display: flex; align-items: center; gap: 8px; font-size: 20px !important; }
 .grande-quien .avatar.mini { width: 36px; height: 36px; font-size: 16px; }
 
-/* Marco dorado: anillo que gira, brillo que late y corona. */
 .marco { position: relative; display: inline-grid; place-items: center; flex: none; border-radius: 50%; padding: 3px; }
-.marco::before {
-  content: ""; position: absolute; inset: 0; border-radius: 50%;
-  background: conic-gradient(#fff6c2, #f5c518, #b8860b, #ffe066, #fff6c2, #d4a017, #f5c518, #fff6c2);
-  animation: marco-gira 2.4s linear infinite;
-}
+.marco::before { content: ""; position: absolute; inset: 0; border-radius: 50%; }
 .marco > .avatar { position: relative; z-index: 1; box-shadow: none; margin: 0; }
 .marco::after {
-  content: "👑"; position: absolute; z-index: 2; top: -.62em; left: 50%; font-size: 15px; line-height: 1;
-  transform: translateX(-50%) rotate(-14deg); filter: drop-shadow(0 1px 1px rgb(0 0 0 / .35));
+  content: ""; position: absolute; z-index: 2; top: -.62em; left: 50%; font-size: 15px; line-height: 1;
+  transform: translateX(-50%); filter: drop-shadow(0 1px 1px rgb(0 0 0 / .35));
 }
-.marco-dorado { animation: marco-brilla 1.8s ease-in-out infinite; }
 .marco.mini { padding: 2px; }
 .marco.mini::after { font-size: 10px; }
-.marco.grande { padding: 5px; margin: 10px auto 6px; display: grid; width: fit-content; }
+.marco.grande { padding: 5px; margin: 14px auto 6px; display: grid; width: fit-content; }
 .marco.grande::after { font-size: 30px; }
 .yo .marco.grande > .avatar { box-shadow: none; }
 @keyframes marco-gira { to { transform: rotate(1turn); } }
-@keyframes marco-brilla {
-  0%, 100% { box-shadow: 0 0 6px 1px rgb(245 197 24 / .55); }
-  50% { box-shadow: 0 0 16px 4px rgb(245 197 24 / .9); }
+
+/* Marco dorado («premium»): anillo de oro macizo con bisel, un destello de luz que lo recorre cada pocos segundos,
+   resplandor cálido que respira, corona de oro dibujada y tres chispas que titilan. */
+.marco-dorado { --g: 3.5px; padding: var(--g); animation: oro-respira 4s ease-in-out infinite; }
+.marco-dorado.mini { --g: 2px; }
+.marco-dorado.grande { --g: 6px; }
+.marco-dorado::before {
+  background: conic-gradient(from 20deg, #7c5410, #e9c25a 8%, #fff4c4 14%, #c99620 22%, #8f6214 32%, #f0cd66 42%,
+    #fff1b8 47%, #b8861c 56%, #7c5410 64%, #e2b84e 74%, #fff6cc 80%, #c18f1f 88%, #7c5410);
+  box-shadow: inset 0 0 0 1px rgb(255 246 210 / .75), inset 0 0 0 calc(var(--g) - 1px) rgb(0 0 0 / 0),
+    0 0 0 1px rgb(92 62 8 / .85);
 }
-@media (prefers-reduced-motion: reduce) { .marco::before, .marco-dorado { animation: none; } }
+.marco-dorado > .avatar { box-shadow: 0 0 0 1px rgb(70 46 6 / .9), inset 0 0 0 1px rgb(255 240 190 / .4); }
+.marco-dorado::after { content: none; }
+.destello {
+  position: absolute; inset: 0; z-index: 2; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(transparent 0 292deg, rgb(255 255 255 / .0) 300deg, rgb(255 255 255 / .95) 322deg,
+    rgb(255 250 225 / .6) 330deg, transparent 344deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--g)), #000 calc(100% - var(--g) + .5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - var(--g)), #000 calc(100% - var(--g) + .5px));
+  animation: oro-destello 3.6s cubic-bezier(.55, 0, .35, 1) infinite;
+}
+.corona {
+  position: absolute; z-index: 3; top: -23%; left: 50%; width: 50%; height: auto;
+  transform: translateX(-50%) rotate(-5deg); filter: drop-shadow(0 1.5px 1.5px rgb(60 35 0 / .45));
+}
+.chispa { position: absolute; z-index: 3; width: 22%; height: 22%; opacity: 0; pointer-events: none; }
+.chispa svg { width: 100%; height: 100%; fill: #fffbe6; filter: drop-shadow(0 0 2px rgb(255 214 90 / .95)); }
+.chispa.c1 { top: 4%; right: -8%; animation: oro-chispa 2.8s ease-in-out infinite; }
+.chispa.c2 { bottom: 2%; left: -9%; width: 16%; height: 16%; animation: oro-chispa 2.8s ease-in-out .9s infinite; }
+.chispa.c3 { bottom: -6%; right: 10%; width: 13%; height: 13%; animation: oro-chispa 2.8s ease-in-out 1.8s infinite; }
+.marco-dorado.mini .chispa { display: none; }
+@keyframes oro-destello { 0% { transform: rotate(0); } 70%, 100% { transform: rotate(1turn); } }
+@keyframes oro-chispa {
+  0%, 100% { opacity: 0; transform: scale(.2) rotate(0); }
+  45% { opacity: 1; transform: scale(1) rotate(45deg); }
+  70% { opacity: 0; transform: scale(.4) rotate(90deg); }
+}
+@keyframes oro-respira {
+  0%, 100% { box-shadow: 0 2px 8px rgb(150 105 20 / .35), 0 0 14px rgb(255 205 80 / .18); }
+  50% { box-shadow: 0 2px 10px rgb(150 105 20 / .45), 0 0 24px rgb(255 210 90 / .38); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marco-dorado, .destello, .chispa { animation: none; }
+  .chispa.c1 { opacity: 1; }
+}
 
 /* Marco oscuro: anillo de humo negro y morado que gira al revés, aura de sombra, pluma de cuervo y sello 鴉. */
 .marco-oscuro::before {
@@ -497,6 +532,7 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
   animation: marco-gira 7s linear infinite reverse;
 }
 .marco-oscuro::after { content: "🪶"; transform: translateX(-50%) rotate(28deg); filter: grayscale(1) brightness(.35); }
+.marco-oscuro.grande { margin-top: 10px; }
 .marco-oscuro { animation: marco-sombra 2.6s ease-in-out infinite; }
 .marco-oscuro > .avatar { filter: saturate(.85) contrast(1.05); }
 .sello {
