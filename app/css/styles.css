@@ -583,3 +583,5 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
   @keyframes dia-funde { from { opacity: 0; } }
 }
 .billete-nota { white-space: pre-line; }
+.lugar.enlace svg { color: var(--accent); }
+.sub .chips { margin-top: 4px; }

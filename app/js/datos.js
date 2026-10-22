@@ -113,7 +113,8 @@ const Datos = (() => {
 
   // ---------- Google Maps ----------
   const consulta = id => lugar(id).q || lugar(id).nombre;
-  const urlLugar = id => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(consulta(id));
+  // Un lugar puede traer su propio enlace de Google Maps (url); si no, se busca por q o por el nombre.
+  const urlLugar = id => lugar(id).url || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(consulta(id));
   // Ruta con las paradas en orden (Google admite hasta 9 paradas intermedias). modo: 'driving' o nada (el transporte
   // público de Google no admite paradas intermedias; sin modo, Google enseña la ruta y se puede cambiar allí).
   function urlRuta(ids, modo) {

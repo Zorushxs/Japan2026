@@ -57,8 +57,10 @@ const Piezas = (() => {
     if (resumen && !p.corto) return '';
     const texto = resumen ? p.corto : p.texto;
     const lugares = p.lugares || [];
-    const extra = lugares.length || p.billete
-      ? html`<div class="chips">${lugares.map(id => chipLugar(id, numeros))}${p.billete ? chipBillete(p.billete) : ''}</div>`
+    const enlaces = p.enlaces || [];
+    const extra = lugares.length || p.billete || enlaces.length
+      ? html`<div class="chips">${lugares.map(id => chipLugar(id, numeros))}${p.billete ? chipBillete(p.billete) : ''}
+        ${enlaces.map(e => html`<a class="lugar enlace" href="${e.url}" target="_blank" rel="noopener">${ICON.out}<span>${e.texto}</span></a>`)}</div>`
       : '';
     if (p.tipo === 'tiempo') return html`<li class="paso tiempo"><p>${rich(texto)}</p></li>`;
     return html`<li class="paso ${p.tipo ? 'nota nota-' + p.tipo : ''}">

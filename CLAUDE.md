@@ -45,7 +45,8 @@ concretas, sitios, alojamientos, nombres).
   colores del documento original), `lugares?[]`, `sub?[]`, `billete?`, `corto?`.
 - **Resumen | Detalle** (botón junto a «Plan»; siempre abre en detalle, el resumen no se guarda): en resumen solo salen los pasos con
   `corto` (una línea, sin subpuntos); en detalle, el texto entero y, debajo, el `info` de cada lugar (qué es).
-- **Lugar**: `nombre`, `info?` (qué es, sale en detalle), `q` (búsqueda de Google Maps), `lat`/`lon` opcionales (sin
+- **Paso**: además, `enlaces?: [{ texto, url }]` (chips de enlace web). Los textos admiten `[texto](https://…)`.
+- **Lugar**: `nombre`, `info?` (qué es, sale en detalle), `url?` (enlace propio de Google Maps), `q` (búsqueda de Google Maps), `lat`/`lon` opcionales (sin
   ellas no sale en la captura).
 - **Alojamiento** (`alojamientos.<CLAVE>`): `nombre`, `direccion`, `q?` (búsqueda de Google Maps, p. ej. coordenadas
   exactas; si no hay, la dirección), `notas?`, `lat`/`lon`.
