@@ -22,8 +22,6 @@ const Billetes = (() => {
     const pendientes = ordenados.filter(b => !Datos.archivosBillete(b).length).length;
     root.innerHTML = html`
       <h1 class="h">Billetes</h1>
-      ${V.drive ? html`<a class="btn drive" href="${V.drive}" target="_blank" rel="noopener">${ICON.out}
-        <span>Carpeta de Drive <small>(copia de los documentos, por si acaso)</small></span></a>` : ''}
       ${pendientes ? html`<p class="hint">${pendientes} pendientes de añadir.</p>` : ''}
       ${Billetes.soy() ? '' : html`<p class="hint">Di quién eres (en el calendario) para ver primero los tuyos.</p>`}
       ${Piezas.billetesDe(ordenados)}`;

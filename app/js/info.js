@@ -7,6 +7,9 @@ const Info = (() => {
     root.innerHTML = html`
       <a class="volver" href="#/">${U.ICON.left}<span>Calendario</span></a>
       <h1 class="h">Notas del plan</h1>
+      ${Datos.V.drive ? html`<h2 class="h2">Documentos</h2>
+        <a class="btn drive" href="${Datos.V.drive}" target="_blank" rel="noopener">${U.ICON.out}
+          <span>Carpeta de Drive del viaje <small>(copia de todos los documentos, por si acaso)</small></span></a>` : ''}
       ${(Datos.V.guias || []).length ? html`<h2 class="h2">Guías</h2>
         <div class="billetes">${Datos.V.guias.map(Piezas.guia)}</div>` : ''}
       <h2 class="h2">El plan</h2>
