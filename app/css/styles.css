@@ -609,3 +609,12 @@ details.otros > .billete-caja, details.otros > .billete-pdf { margin: 0 12px 18p
 .cara .sello, .cara .chispa { display: none; }
 .cara { font-size: 9.5px; letter-spacing: -.02em; }
 @media (min-width: 400px) { .cara { font-size: 10.5px; letter-spacing: 0; } }
+/* El tuyo, bastante más grande que los demás (la fila pasa a flex para que le quepa). */
+.grupo-caras { display: flex; align-items: flex-end; gap: 2px; }
+.cara { flex: 1 1 0; }
+.cara.yo-cara { flex: 1.9 1 0; padding: 6px 0 4px; font-size: 12.5px; font-weight: 800; }
+.cara.yo-cara .avatar, .cara.yo-cara .marco { width: 54px; height: 54px; font-size: 22px; }
+.cara.yo-cara .marco { padding: 3px; }
+.cara.yo-cara .marco > .avatar { width: 100%; height: 100%; }
+@media (min-width: 560px) { .cara.yo-cara .avatar, .cara.yo-cara .marco { width: 68px; height: 68px; } }
+.cara.yo-cara { padding-top: 16px; }
