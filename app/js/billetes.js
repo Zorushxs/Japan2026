@@ -34,14 +34,22 @@ const Billetes = (() => {
     try { localStorage.setItem(SOY, nombre); } catch {}
   }
 
+  // Textos de un billete repartido: por defecto «asiento» y «Usado»; un billete puede cambiarlos (p. ej. un pase:
+  // cosa: 'pase', marca: ['Sin canjear', 'Canjeado', 'canjeados']). Y para quién es (para: […]; si no, todo el grupo).
+  function textos(b) {
+    const [sinUsar, usado, usados] = b.marca || ['Sin usar', 'Usado', 'usados'];
+    return { cosa: b.cosa || 'asiento', sinUsar, usado, usados, para: b.para || V.grupo || [] };
+  }
+
   function detalle(root, b) {
+    const T = textos(b);
     const yo = soy();
     // Primero el tuyo (si has dicho quién eres), luego el resto en su orden.
     const archivos = Datos.archivosBillete(b).map((a, i) => ({ ...a, i, estado: Sincro.item(Sincro.clave(b, a)) }));
     const ordenados = yo ? [...archivos].sort((x, y) => (y.estado.nombre === yo) - (x.estado.nombre === yo)) : archivos;
     const conNombre = archivos.filter(a => a.estado.nombre).length;
     const usados = archivos.filter(a => a.estado.usado).length;
-    const grupo = V.grupo || [];
+    const grupo = T.para;
     const asignados = new Set(archivos.map(a => a.estado.nombre).filter(Boolean));
     const todos = archivos.length >= grupo.length && grupo.length > 0 && grupo.every(n => asignados.has(n));
     const dia = Datos.dia(b.fecha);
@@ -49,8 +57,8 @@ const Billetes = (() => {
     const mio = yo && archivos.find(a => a.estado.nombre === yo);
     root.innerHTML = html`
       <a class="volver" href="#/billetes">${ICON.left}<span>Billetes</span></a>
-      ${todos ? html`<p class="todos-asignados">✓ ¡Ya tenemos todos un asiento asignado!</p>` : ''}
-      ${reparto ? cajaYo(yo, mio) : ''}
+      ${todos ? html`<p class="todos-asignados">✓ ¡Ya tenemos todos un ${T.cosa} asignado!</p>` : ''}
+      ${reparto ? cajaYo(yo, mio, T) : ''}
       <h1 class="h">${b.titulo}</h1>
       <p class="sub-h">${U.fmtLong(b.fecha)}${b.hora ? ' · ' + b.hora : ''}
         ${dia ? html` · <a href="#/dia/${dia.fecha}">ver el día</a>` : ''}</p>
@@ -58,23 +66,23 @@ const Billetes = (() => {
       ${b.guia && Datos.guia(b.guia) ? html`<div class="guias-dia">${Piezas.guia(Datos.guia(b.guia), true)}</div>` : ''}
       ${reparto ? html`
         <div class="reparto">
-          <p><b>${conNombre} de ${archivos.length}</b> con nombre · <b>${usados}</b> usados</p>
+          <p><b>${conNombre} de ${archivos.length}</b> con nombre · <b>${usados}</b> ${T.usados}</p>
           <p class="hint sincro">${Sincro.texto()}</p>
         </div>` : ''}
       ${!archivos.length ? html`<p class="vacio">Aún no está el billete.</p>`
-        : mio && reparto ? html`${archivo(b, mio, yo, true)}
+        : mio && reparto ? html`${archivo(b, mio, yo, true, T)}
           <details class="otros" ${otrosAbierto ? 'open' : ''}>
             <summary>Billetes del resto (${archivos.length - 1})</summary>
-            ${archivos.filter(a => a !== mio).map(a => archivo(b, a, yo, true))}
+            ${archivos.filter(a => a !== mio).map(a => archivo(b, a, yo, true, T))}
           </details>`
-        : ordenados.map(a => archivo(b, a, yo, reparto))}`;
+        : ordenados.map(a => archivo(b, a, yo, reparto, T))}`;
     const otros = root.querySelector('details.otros');
     if (otros) otros.addEventListener('toggle', () => { otrosAbierto = otros.open; });
     const de = el => archivos[Number(el.dataset.i)];
     U.onActions(root, {
       abrir: el => abrir(de(el)),
       ampliar: el => ampliar(de(el)),
-      nombre: el => preguntarNombre(b, de(el), archivos),
+      nombre: el => preguntarNombre(b, de(el), archivos, T),
       usado: el => {
         const a = de(el);
         Sincro.cambiar(Sincro.clave(b, a), { usado: !a.estado.usado });
@@ -89,7 +97,7 @@ const Billetes = (() => {
   }
 
   // Recuadro grande de arriba: quién eres y tu asiento (o que aún no has elegido quién eres).
-  function cajaYo(yo, mio) {
+  function cajaYo(yo, mio, T) {
     if (!yo) {
       return html`<div class="yo sin-yo">
         <p class="yo-quien">👋 ¿Quién eres?</p>
@@ -97,12 +105,14 @@ const Billetes = (() => {
         <button type="button" class="btn yo-btn" data-act="soy">Elegir mi nombre</button>
       </div>`;
     }
-    return html`<div class="yo ${mio ? '' : 'sin-asiento'}">
+    const noEsTuyo = !T.para.includes(yo);
+    return html`<div class="yo ${mio ? '' : noEsTuyo ? 'no-tuyo' : 'sin-asiento'}">
       ${Piezas.avatar(yo, 'grande')}
       <p class="yo-quien">Eres <b>${yo}</b></p>
-      ${mio ? html`<p class="yo-asiento">Tu asiento: <b>${asiento(mio)}</b></p>
+      ${mio ? html`<p class="yo-asiento">Tu ${T.cosa}: <b>${asiento(mio)}</b></p>
           <button type="button" class="btn yo-btn" data-act="ampliar" data-i="${mio.i}">Ver mi billete</button>`
-        : html`<p class="yo-asiento">Aún no tienes asiento en este tren.</p>`}
+        : noEsTuyo ? html`<p class="yo-asiento">Este billete no es para ti.</p>`
+        : html`<p class="yo-asiento">Aún no tienes ${T.cosa} asignado.</p>`}
       <button type="button" class="yo-cambiar" data-act="soy">No soy ${yo}</button>
     </div>`;
   }
@@ -110,13 +120,13 @@ const Billetes = (() => {
   const esImagen = a => /\.(png|jpe?g|webp|gif)$/i.test(a.ruta);
 
   // Una entrada: de quién es, si está usada y la imagen (o el PDF).
-  function archivo(b, a, yo, reparto) {
+  function archivo(b, a, yo, reparto, T) {
     const mio = yo && a.estado.nombre === yo;
     const controles = reparto ? html`<div class="billete-ctrl">
         <button type="button" class="btn-ruta ${a.estado.nombre ? 'con-nombre' : ''}" data-act="nombre" data-i="${a.i}">
           ${a.estado.nombre ? html`${Piezas.avatar(a.estado.nombre, 'mini')}<span>${a.estado.nombre}</span>` : 'Asignar a…'}</button>
         <button type="button" class="btn-ruta usado" data-act="usado" data-i="${a.i}" aria-pressed="${a.estado.usado}">
-          ${a.estado.usado ? '✓ Usado' : 'Sin usar'}</button>
+          ${a.estado.usado ? '✓ ' + T.usado : T.sinUsar}</button>
       </div>` : '';
     if (esImagen(a)) {
       return html`<div class="billete-caja ${mio ? 'mio' : ''} ${a.estado.usado ? 'gastado' : ''}">
@@ -143,8 +153,8 @@ const Billetes = (() => {
 
   // Ventana con un botón por persona del grupo. `ocupados`: { nombre: 'en 16-B' } (salen marcados). Devuelve el nombre
   // elegido, '' (quitar) o null (cancelar).
-  function elegirPersona(titulo, actualNombre, ocupados) {
-    const grupo = V.grupo || [];
+  function elegirPersona(titulo, actualNombre, ocupados, personas, cosa) {
+    const grupo = personas || V.grupo || [];
     if (!grupo.length) return pedirNombre(titulo, actualNombre, true);
     const dialog = document.createElement('dialog');
     dialog.className = 'ask';
@@ -153,7 +163,7 @@ const Billetes = (() => {
       <div class="personas">${grupo.map(n => html`<button type="button" class="persona ${ocupados[n] ? 'ocupada' : ''}"
           data-persona="${n}" aria-pressed="${n === actualNombre}">
           ${Piezas.avatar(n)}<b>${n}</b>${ocupados[n] ? html`<small>${ocupados[n]}</small>` : ''}</button>`)}</div>
-      ${Object.keys(ocupados).length ? html`<p class="hint">Si eliges a alguien que ya tiene asiento, se le cambia a este.</p>` : ''}
+      ${Object.keys(ocupados).length ? html`<p class="hint">Si eliges a alguien que ya tiene ${cosa || 'asiento'}, se le cambia a este.</p>` : ''}
       <div class="ask-btns">
         ${actualNombre ? html`<button value="quitar" class="btn">Quitar</button>` : ''}
         <button value="no" class="btn">Cancelar</button>
@@ -207,12 +217,13 @@ const Billetes = (() => {
   }
 
   // Asigna una entrada a alguien. Si esa persona ya tenía otra entrada de este billete, se le quita de allí.
-  async function preguntarNombre(b, a, archivos) {
+  async function preguntarNombre(b, a, archivos, T) {
     const ocupados = {};
     archivos.forEach(otro => {
       if (otro !== a && otro.estado.nombre) ocupados[otro.estado.nombre] = 'en ' + asiento(otro);
     });
-    const nombre = await elegirPersona(`¿De quién es el asiento ${asiento(a)}?`, a.estado.nombre, ocupados);
+    const titulo = T.cosa === 'asiento' ? `¿De quién es el asiento ${asiento(a)}?` : `¿De quién es «${asiento(a)}»?`;
+    const nombre = await elegirPersona(titulo, a.estado.nombre, ocupados, T.para, T.cosa);
     if (nombre === null || nombre === a.estado.nombre) return;
     archivos.forEach(otro => {
       if (otro !== a && nombre && otro.estado.nombre === nombre) Sincro.cambiar(Sincro.clave(b, otro), { nombre: '' });
@@ -260,5 +271,5 @@ const Billetes = (() => {
   }
 
   // soy / ponerSoy / elegirSoy también los usa el calendario (la franja del grupo).
-  return { nav: 'billetes', render, actual: () => actual, miAsiento, soy, ponerSoy, elegirSoy };
+  return { nav: 'billetes', render, actual: () => actual, miAsiento, soy, ponerSoy, elegirSoy, textos };
 })();

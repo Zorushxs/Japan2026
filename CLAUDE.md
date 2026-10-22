@@ -61,6 +61,8 @@ concretas, sitios, alojamientos, nombres).
 - **Billete**: `id`, `titulo`, `fecha`, `hora?`, `nota?`, `archivo` o `archivos` (rutas dentro de `privado/`, p. ej.
   `billetes/x.pdf`; también `{ ruta, nombre }`, uno por persona). Sin archivo, sale como pendiente. Para QR mejor una
   imagen (PNG/JPG) que un PDF: se ve dentro de la app, sobre blanco.
+  Para repartir entre parte del grupo: `para: [nombres]`; y otros textos: `cosa: 'pase'`, `marca: ['Sin canjear',
+  'Canjeado', 'canjeados']` (por defecto «asiento» y «Usado»). `reparto: false` para no repartir (p. ej. los coches).
 
 ## Billetes compartidos (nombres y «usado»)
 
