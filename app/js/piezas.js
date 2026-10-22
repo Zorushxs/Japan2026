@@ -145,8 +145,22 @@ const Piezas = (() => {
     <span class="billete-estado">Ver</span>
   </a>`;
 
+  // Avatar de una persona: su foto (VIAJE.avatares) o su inicial en un círculo de color. Cada persona del grupo tiene
+  // un color distinto (por su orden en VIAJE.grupo); alguien de fuera, uno que sale de su nombre.
+  const COLORES = ['#d64545', '#2f8f5b', '#3a6fd8', '#c27c0e', '#8a4fd0', '#0f8a8a', '#d0477f', '#5b6b2f', '#7a5230'];
+  function avatar(nombre, clase) {
+    const foto = (Datos.V.avatares || {})[nombre];
+    if (foto) return html`<img class="avatar ${clase || ''}" src="${Datos.archivo(foto)}" alt="">`;
+    const i = (Datos.V.grupo || []).indexOf(nombre);
+    let h = 0;
+    for (const c of String(nombre)) h = (h * 31 + c.codePointAt(0)) % 360;
+    const color = i >= 0 ? COLORES[i % COLORES.length] : `hsl(${h} 55% 45%)`;
+    return html`<span class="avatar ini ${clase || ''}" style="--c:${color}" aria-hidden="true">
+      ${String(nombre).charAt(0).toUpperCase()}</span>`;
+  }
+
   // Chip con el color de la zona.
   const zona = id => html`<span class="zona" style="--z:${Datos.zona(id).color}">${Datos.zona(id).nombre}</span>`;
 
-  return { plan, cabeceraPlan, cambiarModo, mapa, billete, excursion, zona, chipBillete, chipLugar, alojamiento, guia };
+  return { plan, cabeceraPlan, cambiarModo, mapa, billete, excursion, zona, chipBillete, chipLugar, alojamiento, guia, avatar };
 })();

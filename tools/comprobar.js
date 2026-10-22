@@ -47,6 +47,10 @@ function comprobar() {
     mapas(`Excursión ${e.id}`, e);
   });
 
+  Object.entries(V.avatares || {}).forEach(([nombre, ruta]) => {
+    if (!fs.existsSync(path.join(PRIVADO, ruta))) errores.push(`Avatar de ${nombre}: no está privado/${ruta}`);
+  });
+
   const ids = new Set();
   V.billetes.forEach(b => {
     if (ids.has(b.id)) errores.push(`Billete repetido: ${b.id}`);

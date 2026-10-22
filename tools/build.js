@@ -37,7 +37,7 @@ function sal() {
 // { 'mapas/<id>.webp': 'data:image/webp;base64,…', 'billetes/…': …, 'guias/…': … }
 function archivos() {
   const out = {};
-  ['mapas', 'billetes', 'guias'].forEach(carpeta => {
+  ['mapas', 'billetes', 'guias', 'avatares'].forEach(carpeta => {
     const dir = path.join(PRIVADO, carpeta);
     if (!fs.existsSync(dir)) return;
     fs.readdirSync(dir).forEach(nombre => {

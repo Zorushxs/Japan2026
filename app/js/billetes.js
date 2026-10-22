@@ -98,6 +98,7 @@ const Billetes = (() => {
       </div>`;
     }
     return html`<div class="yo ${mio ? '' : 'sin-asiento'}">
+      ${Piezas.avatar(yo, 'grande')}
       <p class="yo-quien">Eres <b>${yo}</b></p>
       ${mio ? html`<p class="yo-asiento">Tu asiento: <b>${asiento(mio)}</b></p>
           <button type="button" class="btn yo-btn" data-act="ampliar" data-i="${mio.i}">Ver mi billete</button>`
@@ -113,7 +114,7 @@ const Billetes = (() => {
     const mio = yo && a.estado.nombre === yo;
     const controles = reparto ? html`<div class="billete-ctrl">
         <button type="button" class="btn-ruta ${a.estado.nombre ? 'con-nombre' : ''}" data-act="nombre" data-i="${a.i}">
-          ${a.estado.nombre ? '👤 ' + a.estado.nombre : 'Asignar a…'}</button>
+          ${a.estado.nombre ? html`${Piezas.avatar(a.estado.nombre, 'mini')}<span>${a.estado.nombre}</span>` : 'Asignar a…'}</button>
         <button type="button" class="btn-ruta usado" data-act="usado" data-i="${a.i}" aria-pressed="${a.estado.usado}">
           ${a.estado.usado ? '✓ Usado' : 'Sin usar'}</button>
       </div>` : '';
@@ -151,7 +152,7 @@ const Billetes = (() => {
       <h2>${titulo}</h2>
       <div class="personas">${grupo.map(n => html`<button type="button" class="persona ${ocupados[n] ? 'ocupada' : ''}"
           data-persona="${n}" aria-pressed="${n === actualNombre}">
-          <b>${n}</b>${ocupados[n] ? html`<small>${ocupados[n]}</small>` : ''}</button>`)}</div>
+          ${Piezas.avatar(n)}<b>${n}</b>${ocupados[n] ? html`<small>${ocupados[n]}</small>` : ''}</button>`)}</div>
       ${Object.keys(ocupados).length ? html`<p class="hint">Si eliges a alguien que ya tiene asiento, se le cambia a este.</p>` : ''}
       <div class="ask-btns">
         ${actualNombre ? html`<button value="quitar" class="btn">Quitar</button>` : ''}
@@ -230,8 +231,9 @@ const Billetes = (() => {
   function ampliar(a) {
     const dialog = document.createElement('dialog');
     dialog.className = 'billete-grande';
-    const quien = a.estado && a.estado.nombre ? ' · ' + a.estado.nombre : '';
-    dialog.innerHTML = html`<p>${a.nombre}${quien}</p><img src="${a.url}" alt="${a.nombre}">
+    const quien = a.estado && a.estado.nombre;
+    dialog.innerHTML = html`${quien ? html`<p class="grande-quien">${Piezas.avatar(quien, 'mini')}<b>${quien}</b></p>` : ''}
+      <p>${a.nombre}</p><img src="${a.url}" alt="${a.nombre}">
       <small>Toca para cerrar · sube el brillo</small>`;
     dialog.addEventListener('close', () => dialog.remove());
     dialog.addEventListener('click', () => dialog.close());
