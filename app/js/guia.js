@@ -24,6 +24,7 @@ const Guia = (() => {
     U.onActions(root, {
       grande: el => grande(el.dataset.i),
       copiar: el => copiar(el.dataset.i),
+      abrirDoc: el => Billetes.abrir({ url: Datos.archivo(el.dataset.ruta) }),
     });
   }
 
@@ -40,6 +41,13 @@ const Guia = (() => {
         <tbody>${filas.map(f => html`<tr>${f.map(c => html`<td>${c}</td>`)}</tr>`)}</tbody></table>`;
     }
     if (b.capturas) return Piezas.capturas(b.capturas);
+    // Documentos (PDF) con «Abrir» y «Descargar», como en los billetes. Solo en guías privadas si son de billetes/.
+    if (b.documentos) return html`<div class="billetes">${b.documentos.map(d => html`<div class="billete-pdf">
+      <span>${U.ICON.ticket}<b>${d.nombre}</b></span>
+      <span class="row">
+        <button type="button" class="btn primary" data-act="abrirDoc" data-ruta="${d.ruta}">${U.ICON.out}<span>Abrir</span></button>
+        <a class="btn" href="${Datos.archivo(d.ruta)}" download="${d.nombre}">${U.ICON.download}<span>Descargar</span></a>
+      </span></div>`)}</div>`;
     if (b.imagen) return html`<figure class="guia-img"><img src="${Datos.archivo(b.imagen)}" alt="${b.pie || ''}"
       loading="lazy">${b.pie ? html`<figcaption>${b.pie}</figcaption>` : ''}</figure>`;
     if (b.lugares) return html`<div class="chips">${b.lugares.map(id => Piezas.chipLugar(id, {}))}</div>`;

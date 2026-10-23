@@ -59,6 +59,12 @@ function comprobar() {
     if (b.imagen && !fs.existsSync(path.join(PRIVADO, b.imagen))) {
       errores.push(`Guía ${g.id}: no está la imagen privado/${b.imagen}`);
     }
+    (b.documentos || []).forEach(d => {
+      if (!fs.existsSync(path.join(PRIVADO, d.ruta))) errores.push(`Guía ${g.id}: no está el documento privado/${d.ruta}`);
+      if (d.ruta.startsWith('billetes/') && !g.privada) {
+        errores.push(`Guía ${g.id}: el documento ${d.ruta} es de billetes/ y la guía no es privada (invitado sin archivo)`);
+      }
+    });
     (b.capturas || []).forEach(c => {
       if (!fs.existsSync(path.join(PRIVADO, c.ruta))) errores.push(`Guía ${g.id}: no está la imagen privado/${c.ruta}`);
     });
