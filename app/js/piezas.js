@@ -15,13 +15,17 @@ const Piezas = (() => {
       ${icono}<span>${Datos.lugar(id).nombre}</span></a>`;
   }
 
+  // Un billete con `verGuia` no tiene página propia: todo está en su guía.
+  const enlaceBillete = b => (b.verGuia ? `#/guia/${b.guia}` : `#/billetes/${b.id}`);
+  const tieneBillete = b => Boolean(b.verGuia) || Datos.archivosBillete(b).length > 0;
+
   const chipBillete = id => {
     const b = Datos.billete(id);
     if (!b) return '';
     // Un billete que es solo de otros no sale en el paso (está en la lista de billetes del día, atenuado).
     if (!Datos.esPara(b, Billetes.soy())) return '';
-    const tiene = Datos.archivosBillete(b).length > 0;
-    return html`<a class="chip-billete ${tiene ? '' : 'falta'}" href="#/billetes/${b.id}">
+    const tiene = tieneBillete(b);
+    return html`<a class="chip-billete ${tiene ? '' : 'falta'}" href="${enlaceBillete(b)}">
       ${ICON.ticket}<span>${b.titulo}</span>${tiene ? '' : html`<em>pendiente</em>`}</a>`;
   };
 
@@ -121,12 +125,12 @@ const Piezas = (() => {
   // Tarjeta de un billete, con su estado.
   function billete(b, ajeno) {
     const archivos = Datos.archivosBillete(b);
-    const tiene = archivos.length > 0;
+    const tiene = tieneBillete(b);
     const estados = archivos.map(a => Sincro.item(Sincro.clave(b, a)));
     const reparto = Datos.reparte(b)
       ? ` · ${estados.filter(e => e.nombre).length}/${archivos.length} con nombre · ${estados.filter(e => e.usado).length} ${Billetes.textos(b).usados}`
       : '';
-    return html`<a class="billete ${tiene ? '' : 'falta'} ${ajeno ? 'ajeno' : ''}" href="#/billetes/${b.id}">
+    return html`<a class="billete ${tiene ? '' : 'falta'} ${ajeno ? 'ajeno' : ''}" href="${enlaceBillete(b)}">
       <span class="billete-ico">${ICON.ticket}</span>
       <span class="billete-txt">${ajeno ? html`<small class="de-otros">De otros:</small>` : ''}<b>${b.titulo}</b>
         <small>${U.fmtShort(b.fecha)}${b.hora ? ' · ' + b.hora : ''}${reparto}</small>

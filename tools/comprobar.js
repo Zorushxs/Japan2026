@@ -56,19 +56,17 @@ function comprobar() {
     (b.lugares || []).forEach(id => {
       if (!Datos.existeLugar(id)) errores.push(`Guía ${g.id}: no existe el lugar «${id}»`);
     });
-    if (b.imagen && !fs.existsSync(path.join(PRIVADO, b.imagen))) {
-      errores.push(`Guía ${g.id}: no está la imagen privado/${b.imagen}`);
-    }
-    (b.documentos || []).forEach(d => {
-      if (!fs.existsSync(path.join(PRIVADO, d.ruta))) errores.push(`Guía ${g.id}: no está el documento privado/${d.ruta}`);
+    // Los archivos de billetes/ no van en la versión de invitado: solo se pueden usar en guías privadas.
+    [...(b.documentos || []), ...(b.capturas || []), ...(b.imagen ? [{ ruta: b.imagen }] : [])].forEach(d => {
+      if (!fs.existsSync(path.join(PRIVADO, d.ruta))) errores.push(`Guía ${g.id}: no está el archivo privado/${d.ruta}`);
       if (d.ruta.startsWith('billetes/') && !g.privada) {
-        errores.push(`Guía ${g.id}: el documento ${d.ruta} es de billetes/ y la guía no es privada (invitado sin archivo)`);
+        errores.push(`Guía ${g.id}: ${d.ruta} es de billetes/ y la guía no es privada (al invitado le saldría roto)`);
       }
     });
-    (b.capturas || []).forEach(c => {
-      if (!fs.existsSync(path.join(PRIVADO, c.ruta))) errores.push(`Guía ${g.id}: no está la imagen privado/${c.ruta}`);
-    });
   }));
+  V.billetes.forEach(b => {
+    if (b.verGuia && !Datos.guia(b.guia)) errores.push(`Billete ${b.id}: verGuia sin una guía que exista`);
+  });
 
   V.excursiones.forEach(e => {
     if (!V.zonas[e.zona]) errores.push(`Excursión ${e.id}: no existe la zona «${e.zona}»`);

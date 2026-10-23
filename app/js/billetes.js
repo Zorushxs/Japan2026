@@ -11,6 +11,7 @@ const Billetes = (() => {
 
   function render(root, id) {
     const b = id && Datos.billete(id);
+    if (b && b.verGuia) { location.replace(`#/guia/${b.guia}`); return; }
     actual = b || null;
     if (b) detalle(root, b);
     else lista(root);

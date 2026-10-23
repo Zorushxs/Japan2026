@@ -82,6 +82,7 @@ concretas, sitios, alojamientos, nombres).
   `para` también decide qué ve cada uno: en Billetes y en cada día la lista sigue el orden de fechas, y los billetes
   que son solo de otros salen en su sitio pero atenuados y compactos («De otros:»; `Datos.esPara`, `Piezas.billetesDe`).
   Cada billete puede llevar `drive` (su carpeta de Google Drive).
+  `verGuia: true` (con `guia`): el billete no tiene página propia; su tarjeta y su chip llevan a la guía, que lo tiene todo.
   Vuelos: `tramos: [{ vuelo, tambien?, aerolinea, avion?, clase?, de/a: { iata, ciudad, fecha, hora?, terminal? },
   aviso?, asientos?: { nombre: '34G' }, escala? }]`, `reserva: { localizador, trip? }`, `pasajeros: { nombre: nºbillete }`.
 
