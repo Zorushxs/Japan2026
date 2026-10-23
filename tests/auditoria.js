@@ -74,6 +74,9 @@ async function descifrar(sobre, pass) {
   ok(/"billetes":\[\]/.test(inv), 'la lista de billetes está vacía');
   ok(!/"sincro"|firebasedatabase/.test(inv), 'no conoce la base de datos (no puede leer asientos ni subidas)');
   ok(!/drive\.google\.com/.test(inv), 'ningún enlace de Drive');
+  const privadas = (V.guias || []).filter(g => g.privada);
+  const f3 = privadas.filter(g => inv.includes(JSON.stringify(g.titulo)) || inv.includes(`"id":"${g.id}"`)).map(g => g.id);
+  ok(!f3.length, `sin las guías privadas (${privadas.length})` + (f3.length ? ': ' + f3 : ''));
 
   console.log('\n3. Versión COMPLETA (control)');
   const full = await descifrar(sobre, PASS);

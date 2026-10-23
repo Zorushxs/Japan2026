@@ -23,7 +23,7 @@ concretas, sitios, alojamientos, nombres).
 - **Contraseña de invitado** (`privado/contraseña-invitado.txt` o `VIAJE_PASS_INVITADO`): `index.html` lleva dos copias
   cifradas de la app (`cajas`), una por contraseña; la cerradura prueba con las dos. La de invitado se genera desde los
   datos ya evaluados y limpios (`viajeInvitado()`: sin billetes, sin `drive`, sin `sincro`, sin ningún texto con
-  drive.google.com) y sin archivos de billetes; build.js se niega a compilar si aún encuentra Drive o la base de datos.
+  drive.google.com, sin las guías con `privada: true` ni lo que las nombre) y sin archivos de billetes; build.js se niega a compilar si aún encuentra Drive o la base de datos.
   Mapas, guías y avatares van una sola vez (`comun`), cifrados con una clave interna que viaja dentro de cada copia
   (marca `<!--KC:…-->`); la cerradura los deja en `window.__COMUNES__`. La prueba tiene el caso «invitado».
 

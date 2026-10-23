@@ -45,6 +45,12 @@ function viajeInvitado() {
   v.billetes = [];
   delete v.drive;
   delete v.sincro;
+  // Guías solo para la versión completa (`privada: true`), y lo que las nombre.
+  const privadas = new Set((v.guias || []).filter(g => g.privada).map(g => g.id));
+  v.guias = (v.guias || []).filter(g => !privadas.has(g.id));
+  v.dias.forEach(d => { if (d.guias) d.guias = d.guias.filter(id => !privadas.has(id)); });
+  Object.values(v.alojamientos || {}).forEach(a => { if (privadas.has(a.guia)) delete a.guia; });
+  (v.avisos || []).forEach(a => { if (privadas.has(a.guia)) delete a.guia; });
   const limpio = JSON.parse(JSON.stringify(v), (k, valor) =>
     (typeof valor === 'string' && /drive\.google\.com/.test(valor) ? '' : valor));
   return `const VIAJE = ${JSON.stringify(limpio)};
