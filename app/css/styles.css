@@ -114,6 +114,17 @@ p { margin: 8px 0; }
 .cuenta { font: 600 17px/1.4 var(--sans); margin: 4px 0 14px; }
 .cuenta a { color: inherit; }
 .cuenta b { color: var(--accent); font-size: 22px; }
+/* Próximo vuelo con cuenta atrás (calendario) y en cada tramo de los billetes de avión. */
+.proximo-vuelo {
+  display: flex; align-items: center; gap: 12px; margin: -4px 0 14px; padding: 10px 14px; border-radius: var(--r);
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink); text-decoration: none;
+}
+.pv-ico { font-size: 26px; line-height: 1; }
+.pv-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pv-txt small { color: var(--mute); font-size: 12.5px; }
+.pv-txt b { font: 800 20px/1.2 var(--sans); color: var(--accent); font-variant-numeric: tabular-nums; }
+.tr-cuenta { margin: 6px 0 0; font-size: 14px; color: var(--mute); }
+.tr-cuenta .cuenta-atras { font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
 .leyenda { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
 .mes { margin-top: 18px; padding: 12px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
 .mes-t { margin: 2px 4px 10px; font: 700 17px/1.2 var(--serif); text-transform: capitalize; }

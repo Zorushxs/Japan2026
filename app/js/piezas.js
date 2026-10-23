@@ -256,5 +256,17 @@ const Piezas = (() => {
   // Chip con el color de la zona.
   const zona = id => html`<span class="zona" style="--z:${Datos.zona(id).color}">${Datos.zona(id).nombre}</span>`;
 
-  return { capturas, billetesDe, plan, cabeceraPlan, cambiarModo, mapa, billete, excursion, zona, chipBillete, chipLugar, alojamiento, guia, avatar };
+  // Cuenta atrás hasta `ms` («1 d 05 h 23 min 10 s»); App la actualiza cada segundo.
+  const cuentaAtras = ms => html`<span class="cuenta-atras" data-hasta="${ms}">${textoCuenta(ms)}</span>`;
+  function textoCuenta(ms) {
+    let s = Math.floor((ms - Date.now()) / 1000);
+    if (s <= 0) return '¡ya!';
+    const d = Math.floor(s / 86400); s -= d * 86400;
+    const h = Math.floor(s / 3600); s -= h * 3600;
+    const m = Math.floor(s / 60); s -= m * 60;
+    const dos = n => String(n).padStart(2, '0');
+    return `${d ? d + ' d ' : ''}${dos(h)} h ${dos(m)} min ${dos(s)} s`;
+  }
+
+  return { cuentaAtras, textoCuenta, capturas, billetesDe, plan, cabeceraPlan, cambiarModo, mapa, billete, excursion, zona, chipBillete, chipLugar, alojamiento, guia, avatar };
 })();

@@ -16,6 +16,7 @@ const Calendario = (() => {
       <h1 class="h">${V.titulo}</h1>
       <p class="sub-h">${U.fmtShort(V.inicio)} – ${U.fmtShort(V.fin)} · ${Datos.dias.length} días</p>
       ${estado()}
+      ${proximoVuelo()}
       <div class="leyenda">${Object.keys(V.zonas).map(Piezas.zona)}</div>
       ${grupo()}
       ${meses().map(mes)}
@@ -45,6 +46,18 @@ const Calendario = (() => {
           data-act="soy-yo" data-nombre="${n}" aria-pressed="${n === yo}" aria-label="${n}">
           ${Piezas.avatar(n)}<span>${n === yo ? 'Tú' : n}</span></button>`)}</div>
     </section>`;
+  }
+
+  // Tu próximo vuelo (o el de cualquiera, si no has dicho quién eres), con la cuenta atrás hasta que despega.
+  function proximoVuelo() {
+    const v = Datos.proximoVuelo(Billetes.soy());
+    if (!v) return '';
+    return html`<a class="proximo-vuelo" href="#/billetes/${v.b.id}">
+      <span class="pv-ico" aria-hidden="true">✈️</span>
+      <span class="pv-txt"><small>Próximo vuelo · ${v.t.vuelo} ${v.t.de.iata} → ${v.t.a.iata} · ${U.fmtShort(v.t.de.fecha)},
+        ${v.t.de.hora} (hora local)</small>
+        <b>${Piezas.cuentaAtras(v.sale)}</b></span>
+    </a>`;
   }
 
   // «Faltan 4 días», «Día 3 de 21» o «Viaje terminado».

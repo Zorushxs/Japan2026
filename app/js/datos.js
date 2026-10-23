@@ -102,6 +102,38 @@ const Datos = (() => {
   // ¿Es para esta persona? Un billete sin `para` es de todos. Sin persona (no ha dicho quién es), todo cuenta como suyo.
   const esPara = (b, quien) => !quien || !b.para || b.para.includes(quien);
 
+  // ---------- Vuelos: la hora de salida como instante (para las cuentas atrás) ----------
+  // Las horas de los vuelos son las locales de cada aeropuerto; esta tabla dice su zona horaria.
+  const ZONAS_AEROPUERTO = { BCN: 'Europe/Madrid', MAD: 'Europe/Madrid', FRA: 'Europe/Berlin', MUC: 'Europe/Berlin',
+    HND: 'Asia/Tokyo', NRT: 'Asia/Tokyo', KIX: 'Asia/Tokyo' };
+  // Diferencia (ms) entre la hora de la zona y la UTC en ese momento.
+  function desfase(zonaHoraria, ms) {
+    const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: zonaHoraria, hourCycle: 'h23',
+      year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' })
+      .formatToParts(new Date(ms)).map(x => [x.type, Number(x.value)]));
+    return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second) - ms;
+  }
+  // { iata, fecha, hora } → milisegundos (o null si falta algo).
+  function instante(p) {
+    const zonaHoraria = ZONAS_AEROPUERTO[p.iata];
+    const hm = /^(\d{1,2}):(\d{2})/.exec(p.hora || '');
+    if (!zonaHoraria || !hm || !p.fecha) return null;
+    const [y, m, d] = p.fecha.split('-').map(Number);
+    const local = Date.UTC(y, m - 1, d, Number(hm[1]), Number(hm[2]));
+    let ms = local;
+    for (let i = 0; i < 2; i++) ms = local - desfase(zonaHoraria, ms);
+    return ms;
+  }
+  // El próximo vuelo que sale (de los billetes de `quien`, o de todos): { b, t, sale } o null.
+  function proximoVuelo(quien, ahora = Date.now()) {
+    let mejor = null;
+    V.billetes.filter(b => b.tramos && esPara(b, quien)).forEach(b => b.tramos.forEach(t => {
+      const sale = instante(t.de);
+      if (sale && sale > ahora && (!mejor || sale < mejor.sale)) mejor = { b, t, sale };
+    }));
+    return mejor;
+  }
+
   // ¿Se reparte entre el grupo (un archivo por persona, con nombre y «usado»)? Sí si hay varios archivos, salvo que
   // el billete diga reparto: false (p. ej. los dos coches).
   const reparte = b => archivosBillete(b).length > 1 && b.reparto !== false;
@@ -158,7 +190,7 @@ const Datos = (() => {
     V, dias, dia, indice, excursion, lugar, existeLugar, zona, billete, guia, bloque, alojamiento, diasDe,
     duerme, despierta, estancias, rutaCoche,
     lugaresDe, mapasDia, mapasExcursion, numeros, todosLosMapas,
-    archivo, imagenMapa, archivosBillete, esPara, reparte, billetesDia,
+    archivo, imagenMapa, archivosBillete, esPara, reparte, billetesDia, instante, proximoVuelo,
     urlLugar, urlRuta, urlComoLlegar, modo, mapaGoogle,
   };
 })();
